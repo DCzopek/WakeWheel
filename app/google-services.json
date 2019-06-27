@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "549113548237",
+    "firebase_url": "https://wakewheel.firebaseio.com",
+    "project_id": "wakewheel",
+    "storage_bucket": "wakewheel.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549113548237:android:17352a1026a5cebe",
+        "android_client_info": {
+          "package_name": "com.example.wakewheel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "549113548237-gscb043icb7vajki427f22jnbsb2eo98.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSx2qm0xM9VjykN01-rD0clP36Dpv0Rk0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "549113548237-gscb043icb7vajki427f22jnbsb2eo98.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
