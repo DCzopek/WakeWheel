@@ -1,10 +1,6 @@
 package com.example.wakewheel
 
-import ACTION_DATA_AVAILABLE
-import ACTION_GATT_CONNECTED
-import ACTION_GATT_DISCONNECTED
-import ACTION_GATT_SERVICES_DISCOVERED
-import BluetoothLeService
+
 import android.Manifest.permission.*
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -21,25 +17,35 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.wakewheel.Consts.ACTION_DATA_AVAILABLE
+import com.example.wakewheel.Consts.ACTION_GATT_CONNECTED
+import com.example.wakewheel.Consts.ACTION_GATT_DISCONNECTED
+import com.example.wakewheel.Consts.ACTION_GATT_SERVICES_DISCOVERED
+import com.example.wakewheel.Consts.EXTRA_DATA
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.content_main.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 import java.util.*
+import javax.inject.Inject
 
 @RuntimePermissions
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private var myHeartRate: HeartRate? = null
+    @Inject
+    lateinit var bluetoothLeService: BluetoothLeService
+    @Inject
+    lateinit var heartRate: HeartRate
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AndroidInjection.inject(this)
+
         setContentView(R.layout.activity_main)
 
-        val heartRate = HeartRate(this)
-        myHeartRate = heartRate
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
@@ -74,7 +80,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         notifications_button.setOnClickListener {
-            heartRate.service.bluetoothGatt?.services?.filter {
+            bluetoothLeService.bluetoothGatt.services?.filter {
                 it.uuid == UUID.fromString(GattAttributes.HEART_RATE_SERVICE)
             }?.let { gattServices ->
                 gattServices.firstOrNull()
@@ -167,26 +173,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private val gattUpdateReceiver = object : BroadcastReceiver() {
 
-        private var bluetoothLeService: BluetoothLeService? = null
 
         override fun onReceive(context: Context, intent: Intent) {
 
-            if (bluetoothLeService == null) {
-                bluetoothLeService = myHeartRate?.service!!
-            }
-
             when (intent.action) {
                 ACTION_GATT_CONNECTED -> {
-                    println("Gatt connected !! Yupi !! ")
+                    println("Gatt connected!! ")
                 }
                 ACTION_GATT_DISCONNECTED -> {
-                    println("Gatt Disconnected :( ")
+                    println("Gatt Disconnected !")
                 }
                 ACTION_GATT_SERVICES_DISCOVERED -> {
-                    println("Gatt Services discovered :  ${bluetoothLeService?.bluetoothGatt?.services}")
+                    println("Gatt Services discovered !")
                 }
                 ACTION_DATA_AVAILABLE -> {
-                    heart_rate.text = intent.getStringExtra(BluetoothLeService.EXTRA_DATA)
+                    heart_rate.text = intent.getStringExtra(EXTRA_DATA)
                 }
             }
         }

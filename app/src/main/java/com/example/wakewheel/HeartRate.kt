@@ -1,6 +1,5 @@
 package com.example.wakewheel
 
-import BluetoothLeService
 import android.annotation.SuppressLint
 import android.bluetooth.*
 import android.bluetooth.le.ScanCallback
@@ -13,7 +12,8 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class HeartRate(
-    val context: Context
+    val context: Context,
+    private val service: BluetoothLeService
 ) {
     private val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     private val bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
@@ -56,7 +56,6 @@ class HeartRate(
             )
     }
 
-    val service = BluetoothLeService(null, context)
 
     fun connectGatt() {
         bluetoothGatt = leScanCallback.deviceList.first().connectGatt(context, true, service.gattCallback)
