@@ -13,21 +13,35 @@ import java.util.concurrent.TimeUnit
 
 class HeartRate(
     val context: Context,
-    private val service: BluetoothLeService
+    private val service: BluetoothLeService,
+    private val recyclerAdapter: DevicesRecyclerAdapter
 ) {
+
+    init {
+        recyclerAdapter.listen()
+            ?.flatMapCompletable {
+                Completable.fromAction { connectGatt(it) }
+            }
+            ?.subscribeOn(Schedulers.io())
+            ?.subscribe()
+    }
+
     private val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     private val bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
     private lateinit var bluetoothGatt: BluetoothGatt
+    val deviceList: HashSet<BluetoothDevice> = hashSetOf()
 
     private val leScanCallback = object : ScanCallback() {
-        val deviceList: HashSet<BluetoothDevice> = hashSetOf()
 
         @SuppressLint("CheckResult")
-        override fun onScanResult(callbackType: Int, result: ScanResult?) {
+        override fun onScanResult(
+            callbackType: Int,
+            result: ScanResult?
+        ) {
             Completable
                 .fromAction {
                     println("device ${result?.device?.name} with MAC : ${result?.device?.address}")
-                    result?.device?.let { deviceList.add(it) }
+                    result?.device?.let { handleScanResult(it) }
                 }
                 .subscribeOn(Schedulers.io())
                 .subscribe(
@@ -36,6 +50,12 @@ class HeartRate(
                 )
         }
 
+    }
+
+    fun handleScanResult(device: BluetoothDevice) {
+        recyclerAdapter.deviceList.add(BleDevice(device.name, device.address))
+        recyclerAdapter.notifyDataSetChanged()
+        deviceList.add(device)
     }
 
     @SuppressLint("CheckResult")
@@ -56,18 +76,19 @@ class HeartRate(
             )
     }
 
-
-    fun connectGatt() {
-        bluetoothGatt = leScanCallback.deviceList.first().connectGatt(context, true, service.gattCallback)
+    fun connectGatt(deviceMac: String) {
+        bluetoothGatt = deviceList.first { it.address == deviceMac }
+            .connectGatt(context, true, service.gattCallback)
         service.bluetoothGatt = bluetoothGatt
     }
 
     fun setNotification(characteristic: BluetoothGattCharacteristic) {
         bluetoothGatt.setCharacteristicNotification(characteristic, true)
         val uuid: UUID = UUID.fromString(GattAttributes.CLIENT_CHARACTERISTIC_CONFIG)
-        val descriptor = characteristic.getDescriptor(uuid).apply {
-            value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-        }
+        val descriptor = characteristic.getDescriptor(uuid)
+            .apply {
+                value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+            }
         bluetoothGatt.writeDescriptor(descriptor)
     }
 

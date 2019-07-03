@@ -9,9 +9,11 @@ import javax.inject.Singleton
     modules = [
         AppModule::class,
         BluetoothModule::class,
-        ActivityBindingsModule::class
+        ActivityBindingsModule::class,
+        BleSearchModule::class
     ]
 )
 interface AppComponent {
+
     fun inject(app: App)
 }

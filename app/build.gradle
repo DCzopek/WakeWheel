@@ -51,5 +51,7 @@ dependencies {
 
     implementation "org.permissionsdispatcher:permissionsdispatcher:4.3.0"
 
+    implementation 'com.jakewharton.rxrelay2:rxrelay:2.1.0'
+
 }
 apply plugin: 'com.google.gms.google-services'

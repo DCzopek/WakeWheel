@@ -28,8 +28,6 @@ class App : Application(),
             .appModule(AppModule(this))
             .build()
             .inject(this)
-
-
     }
 
     override fun broadcastReceiverInjector(): AndroidInjector<BroadcastReceiver> {

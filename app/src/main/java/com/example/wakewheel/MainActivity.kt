@@ -1,27 +1,15 @@
 package com.example.wakewheel
 
-
-import android.Manifest.permission.*
-import android.content.BroadcastReceiver
-import android.content.Context
+import android.Manifest.permission.CAMERA
 import android.content.Intent
-import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.wakewheel.Consts.ACTION_DATA_AVAILABLE
-import com.example.wakewheel.Consts.ACTION_GATT_CONNECTED
-import com.example.wakewheel.Consts.ACTION_GATT_DISCONNECTED
-import com.example.wakewheel.Consts.ACTION_GATT_SERVICES_DISCOVERED
-import com.example.wakewheel.Consts.EXTRA_DATA
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -29,16 +17,10 @@ import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.content_main.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
-import java.util.*
-import javax.inject.Inject
 
 @RuntimePermissions
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    @Inject
-    lateinit var bluetoothLeService: BluetoothLeService
-    @Inject
-    lateinit var heartRate: HeartRate
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,64 +31,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        val filter = IntentFilter(ACTION_GATT_CONNECTED)
-        filter.addAction(ACTION_DATA_AVAILABLE)
-        filter.addAction(ACTION_GATT_DISCONNECTED)
-        filter.addAction(ACTION_GATT_SERVICES_DISCOVERED)
-        registerReceiver(gattUpdateReceiver, filter)
 
-        register_button.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(ACCESS_COARSE_LOCATION, BLUETOOTH, BLUETOOTH_ADMIN),
-                    0
-                )
-
-            } else {
-                heartRate.scanForBle()
-            }
-        }
-
-
-        connect_gatt.setOnClickListener {
-            heartRate.connectGatt()
-        }
 
         face_recognition.setOnClickListener {
             openFaceRecognition()
         }
 
-        notifications_button.setOnClickListener {
-            bluetoothLeService.bluetoothGatt.services?.filter {
-                it.uuid == UUID.fromString(GattAttributes.HEART_RATE_SERVICE)
-            }?.let { gattServices ->
-                gattServices.firstOrNull()
-                    .let { gattService ->
-                        gattService?.characteristics
-                            ?.filter {
-                                it.uuid == UUID.fromString(GattAttributes.HEART_RATE_MEASUREMENT)
-                            }
-                            .let {
-                                it?.firstOrNull()
-                                    ?.let { it1 -> heartRate.setNotification(it1) }
-                            }
-                    }
-            }
-
+        btn_heart_rate.setOnClickListener {
+            startActivity(Intent(this, HeartRateActivity::class.java))
         }
 
         val fab: FloatingActionButton = findViewById(R.id.fab)
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+                .setAction("Action", null)
+                .show()
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val toggle = ActionBarDrawerToggle(
-            this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+            this, drawerLayout, toolbar, R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
         )
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
@@ -171,25 +116,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    private val gattUpdateReceiver = object : BroadcastReceiver() {
 
-
-        override fun onReceive(context: Context, intent: Intent) {
-
-            when (intent.action) {
-                ACTION_GATT_CONNECTED -> {
-                    println("Gatt connected!! ")
-                }
-                ACTION_GATT_DISCONNECTED -> {
-                    println("Gatt Disconnected !")
-                }
-                ACTION_GATT_SERVICES_DISCOVERED -> {
-                    println("Gatt Services discovered !")
-                }
-                ACTION_DATA_AVAILABLE -> {
-                    heart_rate.text = intent.getStringExtra(EXTRA_DATA)
-                }
-            }
-        }
-    }
 }
