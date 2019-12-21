@@ -1,6 +1,6 @@
 package com.example.wakewheel.services
 
-import com.example.wakewheel.BluetoothLeService
+import com.example.wakewheel.hr.BluetoothLeService
 import android.os.Binder
 
 

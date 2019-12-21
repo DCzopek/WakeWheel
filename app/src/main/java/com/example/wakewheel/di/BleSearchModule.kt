@@ -1,6 +1,6 @@
 package com.example.wakewheel.di
 
-import com.example.wakewheel.DevicesRecyclerAdapter
+import com.example.wakewheel.hr.DevicesRecyclerAdapter
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

@@ -1,6 +1,6 @@
 package com.example.wakewheel.di
 
-import com.example.wakewheel.BleSearchActivity
+import com.example.wakewheel.hr.BleSearchActivity
 import com.example.wakewheel.HeartRateActivity
 import com.example.wakewheel.MainActivity
 import dagger.Module

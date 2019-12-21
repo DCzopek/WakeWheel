@@ -1,4 +1,4 @@
-package com.example.wakewheel
+package com.example.wakewheel.hr
 
 object GattAttributes {
     private val attributes = hashMapOf<String, String>()

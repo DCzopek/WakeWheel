@@ -6,6 +6,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.wakewheel.hr.BleSearchActivity
+import com.example.wakewheel.hr.BluetoothLeService
+import com.example.wakewheel.hr.GattAttributes
+import com.example.wakewheel.hr.HeartRate
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_heart_rate.*
 import java.util.UUID

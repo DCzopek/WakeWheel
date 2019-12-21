@@ -1,5 +1,6 @@
 package com.example.wakewheel
 
+import com.example.wakewheel.hr.GattAttributes
 import java.util.*
 
 object Consts {

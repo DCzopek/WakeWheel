@@ -1,4 +1,4 @@
-package com.example.wakewheel
+package com.example.wakewheel.hr
 
 import android.annotation.SuppressLint
 import android.bluetooth.*
@@ -53,7 +53,12 @@ class HeartRate(
     }
 
     fun handleScanResult(device: BluetoothDevice) {
-        recyclerAdapter.deviceList.add(BleDevice(device.name, device.address))
+        recyclerAdapter.deviceList.add(
+            BleDevice(
+                device.name,
+                device.address
+            )
+        )
         recyclerAdapter.notifyDataSetChanged()
         deviceList.add(device)
     }

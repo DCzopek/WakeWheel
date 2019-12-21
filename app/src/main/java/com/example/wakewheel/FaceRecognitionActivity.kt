@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.example.wakewheel.face_recognition.visionImageRotation
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
@@ -52,7 +53,6 @@ class FaceRecognitionActivity : AppCompatActivity() {
             val result = detector.detectInImage(image)
                 .addOnSuccessListener { result ->
                     result.forEach { face ->
-
                         text.text = ""
                         if (face.leftEyeOpenProbability != FirebaseVisionFace.UNCOMPUTED_PROBABILITY &&
                             face.rightEyeOpenProbability != FirebaseVisionFace.UNCOMPUTED_PROBABILITY
@@ -62,9 +62,7 @@ class FaceRecognitionActivity : AppCompatActivity() {
                             Log.d(TAG, "Eyes prob: left -> $leftEyeProb   right -> $rightEyeProb")
                             if (leftEyeProb > 0.8 && rightEyeProb > 0.8) {
                                 text.text = "Your eyes are open"
-                            }
-                            else
-                            {
+                            } else {
                                 text.text = "You have at least one eye closed"
                             }
                         }
@@ -78,4 +76,5 @@ class FaceRecognitionActivity : AppCompatActivity() {
     }
 }
 
-fun createFaceRecognitionIntent(context: Context) = Intent(context, FaceRecognitionActivity::class.java)
+fun createFaceRecognitionIntent(context: Context) =
+    Intent(context, FaceRecognitionActivity::class.java)

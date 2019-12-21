@@ -1,8 +1,9 @@
-package com.example.wakewheel
+package com.example.wakewheel.hr
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.wakewheel.R
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 
@@ -25,7 +26,11 @@ class DevicesRecyclerAdapter : RecyclerView.Adapter<DeviceViewHolder>() {
         viewType: Int
     ): DeviceViewHolder {
         return DeviceViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.row_device, parent, false)
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.row_device,
+                parent,
+                false
+            )
         )
     }
 

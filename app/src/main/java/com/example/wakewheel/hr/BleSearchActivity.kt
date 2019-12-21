@@ -1,4 +1,4 @@
-package com.example.wakewheel
+package com.example.wakewheel.hr
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -8,9 +8,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.wakewheel.R
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_ble_search.*
-import kotlinx.android.synthetic.main.content_main.*
 import javax.inject.Inject
 
 class BleSearchActivity : AppCompatActivity() {

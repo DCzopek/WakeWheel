@@ -1,4 +1,4 @@
-package com.example.wakewheel
+package com.example.wakewheel.hr
 
 import android.annotation.SuppressLint
 import android.app.Service
@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
+import com.example.wakewheel.Consts
 import com.example.wakewheel.services.BluetoothLeServiceBinder
 
 @SuppressLint("Registered")
@@ -30,8 +31,10 @@ class BluetoothLeService(
             val intentAction: String
             when (newState) {
                 BluetoothProfile.STATE_CONNECTED -> {
-                    intentAction = Consts.ACTION_GATT_CONNECTED
-                    connectionState = Consts.STATE_CONNECTED
+                    intentAction =
+                        Consts.ACTION_GATT_CONNECTED
+                    connectionState =
+                        Consts.STATE_CONNECTED
                     broadcastUpdate(intentAction)
                     Log.i("BlueService", "Connected to GATT server.")
                     Log.i(
@@ -40,7 +43,8 @@ class BluetoothLeService(
                     )
                 }
                 BluetoothProfile.STATE_DISCONNECTED -> {
-                    intentAction = Consts.ACTION_GATT_DISCONNECTED
+                    intentAction =
+                        Consts.ACTION_GATT_DISCONNECTED
                     connectionState = BluetoothAdapter.STATE_DISCONNECTED
                     Log.i("BlueService", "Disconnected from GATT server.")
                     broadcastUpdate(intentAction)
