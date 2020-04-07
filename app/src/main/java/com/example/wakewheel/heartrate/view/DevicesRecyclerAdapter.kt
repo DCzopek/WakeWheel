@@ -1,31 +1,26 @@
-package com.example.wakewheel
+package com.example.wakewheel.heartrate.view
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.Observable
+import com.example.wakewheel.R
+import com.example.wakewheel.heartrate.BleDevice
 
-class DevicesRecyclerAdapter : RecyclerView.Adapter<DeviceViewHolder>() {
+class DevicesRecyclerAdapter(private val clickListener: DeviceRecyclerClickListener) :
+    RecyclerView.Adapter<DeviceViewHolder>() {
 
-    private val relay : PublishRelay<String> = PublishRelay.create()
-
-    fun emit(data : String){
-        relay.accept(data)
-    }
-
-    fun listen() : Observable<String>? {
-        return relay.distinct()
-    }
-
-    val deviceList = arrayListOf<BleDevice>()
+    var deviceList = listOf<BleDevice>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): DeviceViewHolder {
         return DeviceViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.row_device, parent, false)
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.row_device,
+                parent,
+                false
+            )
         )
     }
 
@@ -40,10 +35,8 @@ class DevicesRecyclerAdapter : RecyclerView.Adapter<DeviceViewHolder>() {
         holder.deviceAddress.text = deviceList[position].macAddress
 
         holder.connectButton.setOnClickListener {
-            emit(holder.deviceAddress.text.toString())
+            clickListener.onConnectClick(holder.deviceAddress.text.toString())
             this.notifyDataSetChanged()
         }
     }
-
-
 }

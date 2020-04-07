@@ -1,4 +1,4 @@
-package com.example.wakewheel
+package com.example.wakewheel.extensions
 
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.otaliastudios.cameraview.Frame

@@ -1,11 +1,12 @@
-package com.example.wakewheel
+package com.example.wakewheel.facerecognition.view
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.example.wakewheel.Const.FACE_RECOGNITION_TAG
+import com.example.wakewheel.R
+import com.example.wakewheel.extensions.visionImageRotation
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
@@ -13,8 +14,6 @@ import com.google.firebase.ml.vision.face.FirebaseVisionFace
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
 import com.otaliastudios.cameraview.Frame
 import kotlinx.android.synthetic.main.activity_face_recognition.*
-
-private const val TAG = "FaceRecognitionScreen"
 
 class FaceRecognitionActivity : AppCompatActivity() {
 
@@ -33,7 +32,7 @@ class FaceRecognitionActivity : AppCompatActivity() {
             }
 
             detectionInProgress = true
-            Log.d(TAG, "Rotation: ${frame.rotation}")
+            Log.d(FACE_RECOGNITION_TAG, "Rotation: ${frame.rotation}")
             val metadata = FirebaseVisionImageMetadata.Builder()
                 .setWidth(frame.size.width)
                 .setHeight(frame.size.height)
@@ -52,19 +51,19 @@ class FaceRecognitionActivity : AppCompatActivity() {
             val result = detector.detectInImage(image)
                 .addOnSuccessListener { result ->
                     result.forEach { face ->
-
                         text.text = ""
                         if (face.leftEyeOpenProbability != FirebaseVisionFace.UNCOMPUTED_PROBABILITY &&
                             face.rightEyeOpenProbability != FirebaseVisionFace.UNCOMPUTED_PROBABILITY
                         ) {
                             val leftEyeProb = face.leftEyeOpenProbability
                             val rightEyeProb = face.rightEyeOpenProbability
-                            Log.d(TAG, "Eyes prob: left -> $leftEyeProb   right -> $rightEyeProb")
+                            Log.d(
+                                FACE_RECOGNITION_TAG,
+                                "Eyes prob: left -> $leftEyeProb   right -> $rightEyeProb"
+                            )
                             if (leftEyeProb > 0.8 && rightEyeProb > 0.8) {
                                 text.text = "Your eyes are open"
-                            }
-                            else
-                            {
+                            } else {
                                 text.text = "You have at least one eye closed"
                             }
                         }
@@ -72,10 +71,8 @@ class FaceRecognitionActivity : AppCompatActivity() {
                     detectionInProgress = false
                 }
                 .addOnFailureListener { failure ->
-                    Log.e(TAG, "Failure", failure)
+                    Log.e(FACE_RECOGNITION_TAG, "Failure", failure)
                 }
         }
     }
 }
-
-fun createFaceRecognitionIntent(context: Context) = Intent(context, FaceRecognitionActivity::class.java)

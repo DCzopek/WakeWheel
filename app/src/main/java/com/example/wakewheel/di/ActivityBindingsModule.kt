@@ -1,7 +1,7 @@
 package com.example.wakewheel.di
 
-import com.example.wakewheel.BleSearchActivity
-import com.example.wakewheel.HeartRateActivity
+import com.example.wakewheel.heartrate.view.BleSearchActivity
+import com.example.wakewheel.heartrate.view.HeartRateActivity
 import com.example.wakewheel.MainActivity
 import dagger.Module
 import dagger.android.AndroidInjectionModule

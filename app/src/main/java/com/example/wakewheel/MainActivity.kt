@@ -1,6 +1,7 @@
 package com.example.wakewheel
 
 import android.Manifest.permission.CAMERA
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -10,17 +11,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.wakewheel.facerecognition.view.FaceRecognitionActivity
+import com.example.wakewheel.heartrate.view.HeartRateActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.AndroidInjection
-import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.content_main.btn_heart_rate
+import kotlinx.android.synthetic.main.content_main.face_recognition
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 
 @RuntimePermissions
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,8 +33,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
-
 
         face_recognition.setOnClickListener {
             openFaceRecognition()
@@ -61,7 +62,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @NeedsPermission(CAMERA)
     fun openFaceRecognition() {
-        startActivity(createFaceRecognitionIntent(this))
+        startActivity(
+            createFaceRecognitionIntent(
+                this
+            )
+        )
     }
 
     override fun onBackPressed() {
@@ -116,5 +121,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-
+    private fun createFaceRecognitionIntent(context: Context) =
+        Intent(context, FaceRecognitionActivity::class.java)
 }

@@ -1,4 +1,4 @@
-package com.example.wakewheel
+package com.example.wakewheel.heartrate.view
 
 import android.view.View
 import android.widget.Button
