@@ -12,6 +12,8 @@ import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import com.example.wakewheel.Const
+import com.example.wakewheel.heartrate.GattAttributes
+import java.util.UUID
 
 @SuppressLint("Registered")
 class BluetoothLeService(
@@ -95,9 +97,8 @@ class BluetoothLeService(
         }
 
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
-            when (status) {
-                BluetoothGatt.GATT_SUCCESS -> broadcastUpdate(Const.ACTION_GATT_SERVICES_DISCOVERED)
-                else -> Log.w("BlueService", "onServicesDiscovered received: $status")
+            if (status == BluetoothGatt.GATT_SUCCESS && hasHeartRateService(gatt)) {
+                broadcastUpdate(Const.ACTION_GATT_HEART_RATE_SERVICE_DISCOVERED)
             }
         }
 
@@ -118,4 +119,10 @@ class BluetoothLeService(
             }
         }
     }
+
+    private fun hasHeartRateService(gatt: BluetoothGatt): Boolean =
+        gatt.services
+            .firstOrNull { it.uuid == UUID.fromString(GattAttributes.HEART_RATE_SERVICE) }
+            ?.let { true }
+            ?: false
 }

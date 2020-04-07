@@ -29,10 +29,11 @@ class HeartRateActivity : AppCompatActivity() {
         println("Before injection")
         println("After injection")
 
+        // todo wynieść ten filter razem z reciverem do innej klasy
         val filter = IntentFilter(Const.ACTION_GATT_CONNECTED)
         filter.addAction(Const.ACTION_DATA_AVAILABLE)
         filter.addAction(Const.ACTION_GATT_DISCONNECTED)
-        filter.addAction(Const.ACTION_GATT_SERVICES_DISCOVERED)
+        filter.addAction(Const.ACTION_GATT_HEART_RATE_SERVICE_DISCOVERED)
         registerReceiver(gattUpdateReceiver, filter)
 
         device_search.setOnClickListener {
@@ -76,8 +77,7 @@ class HeartRateActivity : AppCompatActivity() {
                 Const.ACTION_GATT_DISCONNECTED -> {
                     println("Gatt Disconnected !")
                 }
-                Const.ACTION_GATT_SERVICES_DISCOVERED -> {
-                    println("Gatt Services discovered !")
+                Const.ACTION_GATT_HEART_RATE_SERVICE_DISCOVERED -> {
                     registerNotification()
                 }
                 Const.ACTION_DATA_AVAILABLE -> {

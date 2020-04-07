@@ -28,7 +28,6 @@ class BleHandler(
         connectGatt(deviceMac)
     }
 
-    // todo Check if the bluetooth is on, if not request to turn on
     suspend fun scanForBle(): List<BleDevice> {
         bluetoothLeScanner.startScan(leScanCallback)
         delay(SCAN_PERIOD)
@@ -64,9 +63,8 @@ class BleHandler(
         service.bluetoothGatt = bluetoothGatt
     }
 
-    fun isBluetoothEnabled(): Boolean {
-        TODO("Not yet implemented")
-    }
+    fun isBluetoothEnabled(): Boolean =
+        bluetoothAdapter.isEnabled
 
     companion object {
         private const val SCAN_PERIOD: Long = 5000
