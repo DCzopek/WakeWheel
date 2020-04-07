@@ -10,7 +10,7 @@ import javax.inject.Singleton
         AppModule::class,
         BluetoothModule::class,
         ActivityBindingsModule::class,
-        BleSearchModule::class
+        ViewModelModule::class
     ]
 )
 interface AppComponent {

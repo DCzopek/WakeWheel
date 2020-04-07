@@ -1,4 +1,4 @@
-package com.example.wakewheel
+package com.example.wakewheel.heartrate.view
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -6,38 +6,38 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.wakewheel.hr.BleSearchActivity
-import com.example.wakewheel.hr.BluetoothLeService
-import com.example.wakewheel.hr.GattAttributes
-import com.example.wakewheel.hr.HeartRate
+import com.example.wakewheel.Const
+import com.example.wakewheel.R
+import com.example.wakewheel.heartrate.BleHandler
+import com.example.wakewheel.heartrate.GattAttributes
+import com.example.wakewheel.services.BluetoothLeService
 import dagger.android.AndroidInjection
-import kotlinx.android.synthetic.main.activity_heart_rate.*
+import kotlinx.android.synthetic.main.activity_heart_rate.device_search
+import kotlinx.android.synthetic.main.activity_heart_rate.tv_heart_rate
 import java.util.UUID
 import javax.inject.Inject
 
 class HeartRateActivity : AppCompatActivity() {
 
     @Inject lateinit var bluetoothLeService: BluetoothLeService
-    @Inject lateinit var heartRate: HeartRate
+    @Inject lateinit var bleHandler: BleHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_heart_rate)
-        AndroidInjection.inject(this)
+        println("Before injection")
+        println("After injection")
 
-
-        val filter = IntentFilter(Consts.ACTION_GATT_CONNECTED)
-        filter.addAction(Consts.ACTION_DATA_AVAILABLE)
-        filter.addAction(Consts.ACTION_GATT_DISCONNECTED)
-        filter.addAction(Consts.ACTION_GATT_SERVICES_DISCOVERED)
+        val filter = IntentFilter(Const.ACTION_GATT_CONNECTED)
+        filter.addAction(Const.ACTION_DATA_AVAILABLE)
+        filter.addAction(Const.ACTION_GATT_DISCONNECTED)
+        filter.addAction(Const.ACTION_GATT_SERVICES_DISCOVERED)
         registerReceiver(gattUpdateReceiver, filter)
-
 
         device_search.setOnClickListener {
             startActivity(Intent(this, BleSearchActivity::class.java))
         }
-
-
     }
 
     // todo - wynieść do innej klasy
@@ -56,12 +56,12 @@ class HeartRateActivity : AppCompatActivity() {
                             }
                             .let {
                                 it?.firstOrNull()
-                                    ?.let { it1 -> heartRate.setNotification(it1) }
+                                    ?.let { it1 -> bleHandler.setNotification(it1) }
                             }
                     }
             }
-
     }
+
     private val gattUpdateReceiver = object : BroadcastReceiver() {
 
         override fun onReceive(
@@ -70,18 +70,18 @@ class HeartRateActivity : AppCompatActivity() {
         ) {
 
             when (intent.action) {
-                Consts.ACTION_GATT_CONNECTED -> {
+                Const.ACTION_GATT_CONNECTED -> {
                     println("Gatt connected!! ")
                 }
-                Consts.ACTION_GATT_DISCONNECTED -> {
+                Const.ACTION_GATT_DISCONNECTED -> {
                     println("Gatt Disconnected !")
                 }
-                Consts.ACTION_GATT_SERVICES_DISCOVERED -> {
+                Const.ACTION_GATT_SERVICES_DISCOVERED -> {
                     println("Gatt Services discovered !")
                     registerNotification()
                 }
-                Consts.ACTION_DATA_AVAILABLE -> {
-                    tv_heart_rate.text = intent.getStringExtra(Consts.EXTRA_DATA)
+                Const.ACTION_DATA_AVAILABLE -> {
+                    tv_heart_rate.text = intent.getStringExtra(Const.EXTRA_DATA)
                 }
             }
         }

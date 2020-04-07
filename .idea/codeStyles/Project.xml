@@ -1,8 +1,5 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
-    <AndroidXmlCodeStyleSettings>
-      <option name="ARRANGEMENT_SETTINGS_MIGRATED_TO_191" value="true" />
-    </AndroidXmlCodeStyleSettings>
     <JavaCodeStyleSettings>
       <option name="IMPORT_LAYOUT_TABLE">
         <value>
@@ -30,7 +27,7 @@
     <JetCodeStyleSettings>
       <option name="PACKAGES_TO_USE_STAR_IMPORTS">
         <value>
-          <package name="kotlinx.android.synthetic" withSubpackages="true" static="false" />
+          <package name="kotlinx.android.synthetic" withSubpackages="false" static="false" />
         </value>
       </option>
       <option name="NAME_COUNT_TO_USE_STAR_IMPORT" value="2147483647" />

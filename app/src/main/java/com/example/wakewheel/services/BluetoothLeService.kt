@@ -1,14 +1,17 @@
-package com.example.wakewheel.hr
+package com.example.wakewheel.services
 
 import android.annotation.SuppressLint
 import android.app.Service
-import android.bluetooth.*
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothGatt
+import android.bluetooth.BluetoothGattCallback
+import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import com.example.wakewheel.Consts
-import com.example.wakewheel.services.BluetoothLeServiceBinder
+import com.example.wakewheel.Const
 
 @SuppressLint("Registered")
 class BluetoothLeService(
@@ -32,26 +35,25 @@ class BluetoothLeService(
             when (newState) {
                 BluetoothProfile.STATE_CONNECTED -> {
                     intentAction =
-                        Consts.ACTION_GATT_CONNECTED
+                        Const.ACTION_GATT_CONNECTED
                     connectionState =
-                        Consts.STATE_CONNECTED
+                        Const.STATE_CONNECTED
                     broadcastUpdate(intentAction)
                     Log.i("BlueService", "Connected to GATT server.")
                     Log.i(
                         "BlueService", "Attempting to start service discovery: " +
-                                gatt.discoverServices()
+                            gatt.discoverServices()
                     )
                 }
                 BluetoothProfile.STATE_DISCONNECTED -> {
                     intentAction =
-                        Consts.ACTION_GATT_DISCONNECTED
+                        Const.ACTION_GATT_DISCONNECTED
                     connectionState = BluetoothAdapter.STATE_DISCONNECTED
                     Log.i("BlueService", "Disconnected from GATT server.")
                     broadcastUpdate(intentAction)
                 }
             }
         }
-
 
         private fun broadcastUpdate(action: String) {
             val intent = Intent(action)
@@ -62,7 +64,7 @@ class BluetoothLeService(
             val intent = Intent(action)
 
             when (characteristic.uuid) {
-                Consts.UUID_HEART_RATE_MEASUREMENT -> {
+                Const.UUID_HEART_RATE_MEASUREMENT -> {
                     val flag = characteristic.properties
                     val format = when (flag and 0x01) {
                         0x01 -> {
@@ -76,7 +78,7 @@ class BluetoothLeService(
                     }
                     val heartRate = characteristic.getIntValue(format, 1)
                     Log.d("BlueService", String.format("Received heart rate: %d", heartRate))
-                    intent.putExtra(Consts.EXTRA_DATA, (heartRate).toString())
+                    intent.putExtra(Const.EXTRA_DATA, (heartRate).toString())
                 }
                 else -> {
                     val data: ByteArray? = characteristic.value
@@ -84,7 +86,7 @@ class BluetoothLeService(
                         val hexString: String = data.joinToString(separator = " ") {
                             String.format("%02X", it)
                         }
-                        intent.putExtra(Consts.EXTRA_DATA, "$data\n$hexString")
+                        intent.putExtra(Const.EXTRA_DATA, "$data\n$hexString")
                     }
                 }
 
@@ -94,7 +96,7 @@ class BluetoothLeService(
 
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             when (status) {
-                BluetoothGatt.GATT_SUCCESS -> broadcastUpdate(Consts.ACTION_GATT_SERVICES_DISCOVERED)
+                BluetoothGatt.GATT_SUCCESS -> broadcastUpdate(Const.ACTION_GATT_SERVICES_DISCOVERED)
                 else -> Log.w("BlueService", "onServicesDiscovered received: $status")
             }
         }
@@ -103,7 +105,7 @@ class BluetoothLeService(
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic
         ) {
-            broadcastUpdate(Consts.ACTION_DATA_AVAILABLE, characteristic)
+            broadcastUpdate(Const.ACTION_DATA_AVAILABLE, characteristic)
         }
 
         override fun onCharacteristicRead(
@@ -111,11 +113,8 @@ class BluetoothLeService(
             characteristic: BluetoothGattCharacteristic,
             status: Int
         ) {
-
-            when (status) {
-                BluetoothGatt.GATT_SUCCESS -> {
-                    broadcastUpdate(Consts.ACTION_DATA_AVAILABLE, characteristic)
-                }
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                broadcastUpdate(Const.ACTION_DATA_AVAILABLE, characteristic)
             }
         }
     }
