@@ -10,6 +10,7 @@ import javax.inject.Singleton
         AppModule::class,
         BluetoothModule::class,
         ActivityBindingsModule::class,
+        BroadcastBindingsModule::class,
         ViewModelModule::class
     ]
 )

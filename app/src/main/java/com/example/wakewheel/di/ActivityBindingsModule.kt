@@ -1,8 +1,8 @@
 package com.example.wakewheel.di
 
-import com.example.wakewheel.heartrate.view.BleSearchActivity
-import com.example.wakewheel.heartrate.view.HeartRateActivity
 import com.example.wakewheel.MainActivity
+import com.example.wakewheel.heartrate.view.HeartRateActivity
+import com.example.wakewheel.heartrate.view.PairBleDeviceActivity
 import dagger.Module
 import dagger.android.AndroidInjectionModule
 import dagger.android.ContributesAndroidInjector
@@ -17,5 +17,5 @@ abstract class ActivityBindingsModule {
     internal abstract fun heartRateActivityInjector(): HeartRateActivity
 
     @ContributesAndroidInjector
-    internal abstract fun bleSearchActivity(): BleSearchActivity
+    internal abstract fun bleSearchActivity(): PairBleDeviceActivity
 }

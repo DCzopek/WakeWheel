@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.wakewheel.dbtest.DbTestActivity
 import com.example.wakewheel.facerecognition.view.FaceRecognitionActivity
 import com.example.wakewheel.heartrate.view.HeartRateActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -18,6 +19,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.content_main.btn_heart_rate
+import kotlinx.android.synthetic.main.content_main.dbTest
 import kotlinx.android.synthetic.main.content_main.face_recognition
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
@@ -40,6 +42,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         btn_heart_rate.setOnClickListener {
             startActivity(Intent(this, HeartRateActivity::class.java))
+        }
+
+        dbTest.setOnClickListener {
+            startActivity(Intent(this, DbTestActivity::class.java))
         }
 
         val fab: FloatingActionButton = findViewById(R.id.fab)

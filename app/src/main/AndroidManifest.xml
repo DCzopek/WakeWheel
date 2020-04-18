@@ -26,7 +26,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".facerecognition.view.FaceRecognitionActivity"/>
-        <activity android:name=".heartrate.view.BleSearchActivity"/>
+        <activity android:name=".heartrate.view.PairBleDeviceActivity"/>
         <activity android:name=".heartrate.view.HeartRateActivity"/>
+        <activity android:name=".dbtest.DbTestActivity"/>
     </application>
 </manifest>

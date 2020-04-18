@@ -19,11 +19,11 @@ import kotlinx.android.synthetic.main.activity_ble_search.ble_search_button
 import kotlinx.android.synthetic.main.activity_ble_search.recyclerView
 import javax.inject.Inject
 
-class BleSearchActivity : AppCompatActivity(), DeviceRecyclerClickListener {
+class PairBleDeviceActivity : AppCompatActivity(), DeviceRecyclerClickListener {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var devicesRecyclerAdapter: DevicesRecyclerAdapter
-    private lateinit var viewModel: BleSearchViewModel
+    private lateinit var viewModel: PairBleDeviceViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -31,7 +31,7 @@ class BleSearchActivity : AppCompatActivity(), DeviceRecyclerClickListener {
 
         setContentView(R.layout.activity_ble_search)
 
-        viewModel = ViewModelProvider(this, viewModelFactory).get(BleSearchViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(PairBleDeviceViewModel::class.java)
 
         devicesRecyclerAdapter = DevicesRecyclerAdapter(this)
 
@@ -77,8 +77,8 @@ class BleSearchActivity : AppCompatActivity(), DeviceRecyclerClickListener {
         )
     }
 
-    override fun onConnectClick(macAddress: String) {
-        viewModel.onConnectClick(macAddress)
+    override fun onPairClicked(macAddress: String) {
+        viewModel.onPairClicked(macAddress)
     }
 
     companion object {

@@ -36,10 +36,8 @@ class BluetoothLeService(
             val intentAction: String
             when (newState) {
                 BluetoothProfile.STATE_CONNECTED -> {
-                    intentAction =
-                        Const.ACTION_GATT_CONNECTED
-                    connectionState =
-                        Const.STATE_CONNECTED
+                    intentAction = Const.ACTION_GATT_CONNECTED
+                    connectionState = Const.STATE_CONNECTED
                     broadcastUpdate(intentAction)
                     Log.i("BlueService", "Connected to GATT server.")
                     Log.i(
@@ -48,8 +46,7 @@ class BluetoothLeService(
                     )
                 }
                 BluetoothProfile.STATE_DISCONNECTED -> {
-                    intentAction =
-                        Const.ACTION_GATT_DISCONNECTED
+                    intentAction = Const.ACTION_GATT_DISCONNECTED
                     connectionState = BluetoothAdapter.STATE_DISCONNECTED
                     Log.i("BlueService", "Disconnected from GATT server.")
                     broadcastUpdate(intentAction)
