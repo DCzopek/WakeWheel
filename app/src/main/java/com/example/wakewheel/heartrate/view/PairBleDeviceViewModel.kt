@@ -10,7 +10,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class BleSearchViewModel @Inject constructor(
+class PairBleDeviceViewModel @Inject constructor(
     private val bleHandler: BleHandler
 ) : ViewModel() {
 
@@ -36,7 +36,13 @@ class BleSearchViewModel @Inject constructor(
 
     }
 
-    fun onConnectClick(macAddress: String) {
-        bleHandler.tryConnect(macAddress)
+    fun onPairClicked(macAddress: String) {
+        MainScope().launch {
+            bleHandler.connectDevice(macAddress)
+                .let { success ->
+                    if (success) println("Successfully verify device - can pair")
+                    else println("Fail verifying device - not paired")
+                }
+        }
     }
 }

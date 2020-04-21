@@ -9,6 +9,6 @@ import kotlinx.android.synthetic.main.row_device.view.*
 class DeviceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     val deviceName: TextView = itemView.tv_device_name
-    val deviceAddress: TextView = itemView.tv_mac_address
-    val connectButton: Button = itemView.btn_connect
+    val deviceAddress: TextView = itemView.mac_address
+    val pair: Button = itemView.pair
 }

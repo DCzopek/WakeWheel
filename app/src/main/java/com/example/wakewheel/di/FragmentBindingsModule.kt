@@ -1,7 +1,7 @@
 package com.example.wakewheel.di
 
-import com.example.wakewheel.heartrate.view.HeartRateActivity
-import com.example.wakewheel.main.MainActivity
+import com.example.wakewheel.heartrate.view.PairBleDeviceFragment
+import com.example.wakewheel.heartrate.view.SearchBleDeviceFragment
 import dagger.Module
 import dagger.android.AndroidInjectionModule
 import dagger.android.ContributesAndroidInjector
@@ -9,11 +9,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @Module(includes = [AndroidInjectionModule::class])
-abstract class ActivityBindingsModule {
+abstract class FragmentBindingsModule {
 
     @ContributesAndroidInjector
-    internal abstract fun mainActivityInjector(): MainActivity
+    internal abstract fun pairBleDeviceFragmentInjector(): PairBleDeviceFragment
 
     @ContributesAndroidInjector
-    internal abstract fun heartRateActivityInjector(): HeartRateActivity
+    internal abstract fun searchBleDeviceFragmentInjector(): SearchBleDeviceFragment
 }

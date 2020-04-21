@@ -34,8 +34,8 @@ class DevicesRecyclerAdapter(private val clickListener: DeviceRecyclerClickListe
         holder.deviceName.text = deviceList[position].name
         holder.deviceAddress.text = deviceList[position].macAddress
 
-        holder.connectButton.setOnClickListener {
-            clickListener.onConnectClick(holder.deviceAddress.text.toString())
+        holder.pair.setOnClickListener {
+            clickListener.onPairClicked(holder.deviceAddress.text.toString())
             this.notifyDataSetChanged()
         }
     }

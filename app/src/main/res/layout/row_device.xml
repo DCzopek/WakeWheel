@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-        android:id="@+id/tv_mac_title"
+        android:id="@+id/mac_address_title"
         android:text="MAC: "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,26 +28,26 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tv_mac_address"
+        app:layout_constraintEnd_toStartOf="@+id/mac_address"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_device_name"/>
 
     <TextView
-        android:id="@+id/tv_mac_address"
+        android:id="@+id/mac_address"
         android:text="00:00:00:00"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tv_mac_title"
+        app:layout_constraintStart_toEndOf="@+id/mac_address_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_device_name"/>
 
     <Button
-        android:id="@+id/btn_connect"
-        android:text="Connect"
+        android:id="@+id/pair"
+        android:text="Pair"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"

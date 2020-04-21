@@ -2,7 +2,7 @@ package com.example.wakewheel.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.wakewheel.heartrate.view.BleSearchViewModel
+import com.example.wakewheel.heartrate.view.PairBleDeviceViewModel
 import dagger.Binds
 import dagger.MapKey
 import dagger.Module
@@ -22,6 +22,6 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey (BleSearchViewModel::class)
-    internal abstract fun postListViewModel(viewModel: BleSearchViewModel): ViewModel
+    @ViewModelKey (PairBleDeviceViewModel::class)
+    internal abstract fun postListViewModel(viewModel: PairBleDeviceViewModel): ViewModel
 }
