@@ -37,6 +37,12 @@ class PairBleDeviceViewModel @Inject constructor(
     }
 
     fun onPairClicked(macAddress: String) {
-        bleHandler.tryConnect(macAddress)
+        MainScope().launch {
+            bleHandler.connectDevice(macAddress)
+                .let { success ->
+                    if (success) println("Successfully verify device - can pair")
+                    else println("Fail verifying device - not paired")
+                }
+        }
     }
 }

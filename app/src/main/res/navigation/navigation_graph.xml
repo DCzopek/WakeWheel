@@ -8,5 +8,23 @@
         android:id="@+id/mainFragment"
         android:name="com.example.wakewheel.main.MainFragment"
         android:label="MainFragment"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_mainFragment_to_pairBleDeviceFragment"
+            app:destination="@id/pairBleDeviceFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pairBleDeviceFragment"
+        android:name="com.example.wakewheel.heartrate.view.PairBleDeviceFragment"
+        android:label="PairBleDeviceFragment"
+        tools:layout="@layout/activity_heart_rate">
+        <action
+            android:id="@+id/action_pairBleDeviceFragment_to_searchBleDeviceFragment"
+            app:destination="@id/searchBleDeviceFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchBleDeviceFragment"
+        android:name="com.example.wakewheel.heartrate.view.SearchBleDeviceFragment"
+        android:label="SearchBleDeviceFragment"
+        tools:layout="@layout/activity_ble_search"/>
 </navigation>

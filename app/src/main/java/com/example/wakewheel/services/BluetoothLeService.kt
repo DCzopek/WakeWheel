@@ -3,9 +3,11 @@ package com.example.wakewheel.services
 import android.annotation.SuppressLint
 import android.app.Service
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.content.Intent
@@ -13,6 +15,7 @@ import android.os.IBinder
 import android.util.Log
 import com.example.wakewheel.Const
 import com.example.wakewheel.heartrate.GattAttributes
+import kotlinx.coroutines.delay
 import java.util.UUID
 
 @SuppressLint("Registered")
@@ -21,13 +24,26 @@ class BluetoothLeService(
     private val bluetoothLeServiceBinder: BluetoothLeServiceBinder
 ) : Service() {
 
-    lateinit var bluetoothGatt: BluetoothGatt
+    private var connectionState = BluetoothAdapter.STATE_DISCONNECTED
+
     override fun onBind(intent: Intent): IBinder =
         bluetoothLeServiceBinder
 
-    private var connectionState = BluetoothAdapter.STATE_DISCONNECTED
+    suspend fun connectDevice(device: BluetoothDevice): Boolean =
+        device.connectGatt(this, true, gattCallback)
+            .let { gatt ->
+                delay(2000)
+                gatt.setNotification()
+            }
 
-    val gattCallback = object : BluetoothGattCallback() {
+    private fun BluetoothGatt.setNotification(): Boolean =
+        getHeartRateCharacteristics()
+            ?.let {
+                setCharacteristicNotification(it, true) &&
+                    writeDescriptor(it.getEnableNotificationDescriptor())
+            } ?: false
+
+    private val gattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(
             gatt: BluetoothGatt,
             status: Int,
@@ -116,6 +132,18 @@ class BluetoothLeService(
             }
         }
     }
+
+    private fun BluetoothGatt.getHeartRateCharacteristics(): BluetoothGattCharacteristic? =
+        this.services
+            ?.firstOrNull { it.uuid == UUID.fromString(GattAttributes.HEART_RATE_SERVICE) }
+            ?.let { gattService ->
+                gattService.characteristics
+                    ?.firstOrNull { it.uuid == UUID.fromString(GattAttributes.HEART_RATE_MEASUREMENT) }
+            }
+
+    private fun BluetoothGattCharacteristic.getEnableNotificationDescriptor(): BluetoothGattDescriptor =
+        this.getDescriptor(UUID.fromString(GattAttributes.CLIENT_CHARACTERISTIC_CONFIG))
+            .apply { value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE }
 
     private fun hasHeartRateService(gatt: BluetoothGatt): Boolean =
         gatt.services
