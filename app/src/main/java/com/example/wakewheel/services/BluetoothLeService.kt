@@ -29,6 +29,8 @@ class BluetoothLeService(
     override fun onBind(intent: Intent): IBinder =
         bluetoothLeServiceBinder
 
+
+    // todo add better connection handling ( Enums on concrete status - NO_CHARACTERISTICS / NO_HEAR_RATE_SERVICE etc
     suspend fun connectDevice(device: BluetoothDevice): Boolean =
         device.connectGatt(this, true, gattCallback)
             .let { gatt ->

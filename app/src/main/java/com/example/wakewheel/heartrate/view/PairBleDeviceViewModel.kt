@@ -24,6 +24,11 @@ class PairBleDeviceViewModel @Inject constructor(
 
     private val _startActivity = SingleLiveEvent<Any>()
 
+    val showToast: LiveData<String>
+        get() = _showToast
+
+    private val _showToast = SingleLiveEvent<String>()
+
     fun onScanClick() {
         if (bleHandler.isBluetoothEnabled()) {
             MainScope().launch {
@@ -40,8 +45,13 @@ class PairBleDeviceViewModel @Inject constructor(
         MainScope().launch {
             bleHandler.connectDevice(macAddress)
                 .let { success ->
-                    if (success) println("Successfully verify device - can pair")
-                    else println("Fail verifying device - not paired")
+                    if (success) {
+                        _showToast.postValue("Connection succeed")
+                        println("Successfully verify device - can pair")
+                    } else {
+                        _showToast.postValue("Connection fail")
+                        println("Fail verifying device - not paired")
+                    }
                 }
         }
     }

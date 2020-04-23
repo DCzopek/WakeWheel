@@ -28,7 +28,7 @@ class BleHandler(
         bluetoothLeScanner.startScan(leScanCallback)
         delay(SCAN_PERIOD)
         bluetoothLeScanner.stopScan(leScanCallback)
-        return deviceList.toList().map { BleDevice(it.name, it.address) }
+        return deviceList.toList().map { BleDevice(it.name ?: "Undefined", it.address) }
     }
 
     private val leScanCallback = object : ScanCallback() {
@@ -37,7 +37,7 @@ class BleHandler(
             callbackType: Int,
             result: ScanResult?
         ) {
-            println("device ${result?.device?.name} with MAC : ${result?.device?.address}")
+            println("device ${result?.device?.name ?: "Undefined"} with MAC : ${result?.device?.address}")
             result?.device?.let { deviceList.add(it) }
         }
 
