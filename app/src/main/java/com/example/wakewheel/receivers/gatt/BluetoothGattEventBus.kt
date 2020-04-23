@@ -18,7 +18,6 @@ class BluetoothGattEventBus {
 }
 
 enum class BluetoothGattAction {
-    DATA_RECEIVE,
     GATT_CONNECTED,
     GATT_DISCONNECTED,
     HEART_SERVICE_DISCOVERED

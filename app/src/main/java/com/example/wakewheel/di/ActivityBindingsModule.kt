@@ -1,6 +1,5 @@
 package com.example.wakewheel.di
 
-import com.example.wakewheel.heartrate.view.HeartRateActivity
 import com.example.wakewheel.main.MainActivity
 import dagger.Module
 import dagger.android.AndroidInjectionModule
@@ -13,7 +12,4 @@ abstract class ActivityBindingsModule {
 
     @ContributesAndroidInjector
     internal abstract fun mainActivityInjector(): MainActivity
-
-    @ContributesAndroidInjector
-    internal abstract fun heartRateActivityInjector(): HeartRateActivity
 }

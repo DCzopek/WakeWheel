@@ -93,7 +93,7 @@ class BluetoothLeService(
                     }
                     val heartRate = characteristic.getIntValue(format, 1)
                     Log.d("BlueService", String.format("Received heart rate: %d", heartRate))
-                    intent.putExtra(Const.EXTRA_DATA, (heartRate).toString())
+                    intent.putExtra(Const.EXTRA_HEART_RATE_DATA, (heartRate).toString())
                 }
                 else -> {
                     val data: ByteArray? = characteristic.value
@@ -101,7 +101,7 @@ class BluetoothLeService(
                         val hexString: String = data.joinToString(separator = " ") {
                             String.format("%02X", it)
                         }
-                        intent.putExtra(Const.EXTRA_DATA, "$data\n$hexString")
+                        intent.putExtra(Const.EXTRA_HEART_RATE_DATA, "$data\n$hexString")
                     }
                 }
 
