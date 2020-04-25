@@ -6,9 +6,11 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.content.Context
 import com.example.wakewheel.services.BluetoothLeService
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import java.util.HashSet
 
+@ExperimentalCoroutinesApi
 class BleHandler(
     val context: Context,
     private val service: BluetoothLeService
@@ -19,10 +21,15 @@ class BleHandler(
     private val bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
     private val deviceList: HashSet<BluetoothDevice> = hashSetOf()
 
-    suspend fun connectDevice(deviceMac: String): Boolean =
+    fun connectDevice(deviceMac: String) {
         deviceList
             .first { it.address == deviceMac }
             .let { service.connectDevice(it) }
+    }
+
+    fun connectHeartRateService() {
+        service.connectToHeartRateService()
+    }
 
     suspend fun scanForBle(): List<BleDevice> {
         bluetoothLeScanner.startScan(leScanCallback)

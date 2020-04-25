@@ -23,9 +23,10 @@ import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.activity_ble_search.ble_search_button
 import kotlinx.android.synthetic.main.activity_ble_search.progressBar
 import kotlinx.android.synthetic.main.activity_ble_search.recyclerView
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
-class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
+@ExperimentalCoroutinesApi class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var devicesRecyclerAdapter: DevicesRecyclerAdapter
@@ -71,9 +72,14 @@ class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
                     }
             }
 
-        viewModel.showToast
+        //viewModel.showToast
+        //    .observe(viewLifecycleOwner) {
+        //        Toast.makeText(activity, it, Toast.LENGTH_LONG).show()
+        //    }
+
+        viewModel.deviceConnection
             .observe(viewLifecycleOwner) {
-                Toast.makeText(activity, it, Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, it.name, Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -97,8 +103,7 @@ class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
         (ContextCompat.checkSelfPermission(
             requireContext(),
             Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-            == PackageManager.PERMISSION_GRANTED)
+        ) == PackageManager.PERMISSION_GRANTED)
 
     private fun requestPermissions() {
         requestPermissions(

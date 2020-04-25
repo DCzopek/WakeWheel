@@ -7,8 +7,6 @@ import android.content.IntentFilter
 import com.example.wakewheel.Const
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,14 +19,17 @@ class BluetoothGattReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         AndroidInjection.inject(this, context)
         intent?.run {
-            MainScope().launch {
-                when (action) {
-                    Const.ACTION_DATA_AVAILABLE -> controller.onDataReceive(getStringExtra(Const.EXTRA_HEART_RATE_DATA))
-                    Const.ACTION_GATT_CONNECTED -> controller.onGattConnected()
-                    Const.ACTION_GATT_DISCONNECTED -> controller.onGattDisconnected()
-                    Const.ACTION_GATT_HEART_RATE_SERVICE_DISCOVERED -> controller.onHeartServiceDiscovered()
-                    else -> println("Unknown action in BluetoothGattReceiver")
-                }
+            when (action) {
+                Const.ACTION_DATA_AVAILABLE -> controller.onDataReceive(
+                    getIntExtra(
+                        Const.EXTRA_HEART_RATE_DATA,
+                        0
+                    )
+                )
+                Const.ACTION_GATT_CONNECTED -> controller.onGattConnected()
+                Const.ACTION_GATT_DISCONNECTED -> controller.onGattDisconnected()
+                Const.ACTION_GATT_HEART_RATE_SERVICE_DISCOVERED -> controller.onHeartServiceDiscovered()
+                else -> println("Unknown action in BluetoothGattReceiver")
             }
         }
     }

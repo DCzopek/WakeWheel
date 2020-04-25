@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.wakewheel.R
@@ -33,7 +34,9 @@ class PairBleDeviceFragment : Fragment() {
     // todo event buses should be move to viewModel
     @Inject lateinit var bleEventBus: BluetoothGattEventBus
     @Inject lateinit var eventBus: HeartRateEventBus
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    private lateinit var viewModel: PairBleDeviceViewModel
     private lateinit var navController: NavController
     private var heartRateListen: Job? = null
     private var bleDeviceListen: Job? = null
@@ -49,18 +52,31 @@ class PairBleDeviceFragment : Fragment() {
         AndroidSupportInjection.inject(this)
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel =
+            ViewModelProvider(this, viewModelFactory).get(PairBleDeviceViewModel::class.java)
+
         navController = findNavController()
 
         device_search?.setOnClickListener {
             navController.navigate(R.id.action_pairBleDeviceFragment_to_searchBleDeviceFragment)
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+
         receive_heart_rate?.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) listenForHeartRate()
             else heartRateListen?.cancel()
         }
-
         listenForBleDeviceEvents()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        heartRateListen?.cancel()
+        bleDeviceListen?.cancel()
     }
 
     private fun listenForBleDeviceEvents() {
@@ -78,14 +94,8 @@ class PairBleDeviceFragment : Fragment() {
             eventBus.listen()
                 .openSubscription()
                 .consumeEach {
-                    tv_heart_rate.text = it
+                    tv_heart_rate.text = it.toString()
                 }
         }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        heartRateListen?.cancel()
-        bleDeviceListen?.cancel()
     }
 }

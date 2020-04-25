@@ -28,11 +28,13 @@ class BluetoothModule {
     @Provides
     fun provideBluetoothLeService(
         context: Context,
-        serviceBinder: BluetoothLeServiceBinder
+        serviceBinder: BluetoothLeServiceBinder,
+        gattEventBus: BluetoothGattEventBus
     ): BluetoothLeService =
         BluetoothLeService(
             context,
-            serviceBinder
+            serviceBinder,
+            gattEventBus
         )
 
     @Provides

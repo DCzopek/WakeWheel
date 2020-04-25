@@ -34,5 +34,18 @@
         android:id="@+id/monitoringFragment"
         android:name="com.example.wakewheel.main.MonitoringFragment"
         android:label="MonitoringFragment"
-        tools:layout="@layout/fragment_monitoring"/>
+        tools:layout="@layout/fragment_monitoring">
+        <action
+            android:id="@+id/action_monitoringFragment_to_alarmFragment"
+            app:destination="@id/alarmFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/alarmFragment"
+        android:name="com.example.wakewheel.main.AlarmFragment"
+        android:label="AlarmFragment"
+        tools:layout="@layout/fragmetn_alarm">
+        <action
+            android:id="@+id/action_alarmFragment_to_monitoringFragment"
+            app:destination="@id/monitoringFragment" />
+    </fragment>
 </navigation>

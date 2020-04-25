@@ -1,17 +1,21 @@
 package com.example.wakewheel.receivers
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
 class HeartRateEventBus {
 
-    private val channel = BroadcastChannel<String>(1)
+    private val channel = BroadcastChannel<Int>(1)
 
-    suspend fun send(value: String) {
-        channel.send(value)
+    fun send(value: Int) {
+        MainScope().launch {
+            channel.send(value)
+        }
     }
 
-    fun listen(): BroadcastChannel<String> =
+    fun listen(): BroadcastChannel<Int> =
         channel
 }

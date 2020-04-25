@@ -12,19 +12,19 @@ class BluetoothGattController(
     private val heartRateEventBus: HeartRateEventBus
 ) {
 
-    suspend fun onDataReceive(value: String) {
+    fun onDataReceive(value: Int) {
         heartRateEventBus.send(value)
     }
 
-    suspend fun onGattConnected() {
+    fun onGattConnected() {
         gattEventBus.send(GATT_CONNECTED)
     }
 
-    suspend fun onGattDisconnected() {
+    fun onGattDisconnected() {
         gattEventBus.send(GATT_DISCONNECTED)
     }
 
-    suspend fun onHeartServiceDiscovered() {
+    fun onHeartServiceDiscovered() {
         gattEventBus.send(HEART_SERVICE_DISCOVERED)
     }
 }
