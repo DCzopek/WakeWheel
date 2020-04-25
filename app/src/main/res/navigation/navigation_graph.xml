@@ -12,12 +12,15 @@
         <action
             android:id="@+id/action_mainFragment_to_pairBleDeviceFragment"
             app:destination="@id/pairBleDeviceFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_monitoringFragment"
+            app:destination="@id/monitoringFragment" />
     </fragment>
     <fragment
         android:id="@+id/pairBleDeviceFragment"
         android:name="com.example.wakewheel.heartrate.view.PairBleDeviceFragment"
         android:label="PairBleDeviceFragment"
-        tools:layout="@layout/activity_heart_rate">
+        tools:layout="@layout/fragment_heart_rate">
         <action
             android:id="@+id/action_pairBleDeviceFragment_to_searchBleDeviceFragment"
             app:destination="@id/searchBleDeviceFragment" />
@@ -27,4 +30,22 @@
         android:name="com.example.wakewheel.heartrate.view.SearchBleDeviceFragment"
         android:label="SearchBleDeviceFragment"
         tools:layout="@layout/activity_ble_search"/>
+    <fragment
+        android:id="@+id/monitoringFragment"
+        android:name="com.example.wakewheel.main.MonitoringFragment"
+        android:label="MonitoringFragment"
+        tools:layout="@layout/fragment_monitoring">
+        <action
+            android:id="@+id/action_monitoringFragment_to_alarmFragment"
+            app:destination="@id/alarmFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/alarmFragment"
+        android:name="com.example.wakewheel.main.AlarmFragment"
+        android:label="AlarmFragment"
+        tools:layout="@layout/fragmetn_alarm">
+        <action
+            android:id="@+id/action_alarmFragment_to_monitoringFragment"
+            app:destination="@id/monitoringFragment" />
+    </fragment>
 </navigation>

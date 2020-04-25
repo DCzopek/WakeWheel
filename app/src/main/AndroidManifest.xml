@@ -31,6 +31,5 @@
             </intent-filter>
         </activity>
         <activity android:name=".facerecognition.view.FaceRecognitionActivity" />
-        <activity android:name=".dbtest.DbTestActivity" />
     </application>
 </manifest>

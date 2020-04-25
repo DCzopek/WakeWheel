@@ -15,31 +15,71 @@ import android.os.IBinder
 import android.util.Log
 import com.example.wakewheel.Const
 import com.example.wakewheel.heartrate.GattAttributes
-import kotlinx.coroutines.delay
+import com.example.wakewheel.receivers.gatt.BluetoothGattAction
+import com.example.wakewheel.receivers.gatt.BluetoothGattAction.CONNECT_TO_HEART_RATE_DEVICE_SUCCEED
+import com.example.wakewheel.receivers.gatt.BluetoothGattAction.SET_NOTIFICATION_FAILS
+import com.example.wakewheel.receivers.gatt.BluetoothGattAction.SET_NOTIFICATION_FAILS_NO_CONNECTED_DEVICE
+import com.example.wakewheel.receivers.gatt.BluetoothGattEventBus
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import java.util.UUID
 
+@ExperimentalCoroutinesApi
 @SuppressLint("Registered")
 class BluetoothLeService(
     private val context: Context,
-    private val bluetoothLeServiceBinder: BluetoothLeServiceBinder
+    private val bluetoothLeServiceBinder: BluetoothLeServiceBinder,
+    private val gattEventBus: BluetoothGattEventBus
 ) : Service() {
 
     private var connectionState = BluetoothAdapter.STATE_DISCONNECTED
+    private var connectedDevice: BluetoothGatt? = null
+    private var eventBusListener: Job? = null
+
+    override fun onCreate() {
+        super.onCreate()
+        eventBusListener = MainScope().launch {
+            gattEventBus.listen()
+                .openSubscription()
+                .consumeEach {
+                    if (it == BluetoothGattAction.GATT_CONNECTED) {
+                        connectedDevice = null
+                    }
+                }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        eventBusListener?.cancel()
+    }
 
     override fun onBind(intent: Intent): IBinder =
         bluetoothLeServiceBinder
 
-    suspend fun connectDevice(device: BluetoothDevice): Boolean =
-        device.connectGatt(this, true, gattCallback)
-            .let { gatt ->
-                delay(2000)
-                gatt.setNotification()
-            }
+    fun connectDevice(device: BluetoothDevice) {
+        connectedDevice?.setNotification(enable = false)
+        connectedDevice?.disconnect()
+        connectedDevice = device.connectGatt(this, true, gattCallback)
+    }
 
-    private fun BluetoothGatt.setNotification(): Boolean =
+    fun connectToHeartRateService() {
+        with(gattEventBus) {
+            connectedDevice?.setNotification(enable = true)
+                ?.let { success ->
+                    if (success) send(CONNECT_TO_HEART_RATE_DEVICE_SUCCEED)
+                    else send(SET_NOTIFICATION_FAILS)
+                } ?: send(SET_NOTIFICATION_FAILS_NO_CONNECTED_DEVICE)
+        }
+    }
+
+    private fun BluetoothGatt.setNotification(enable: Boolean): Boolean =
         getHeartRateCharacteristics()
             ?.let {
-                setCharacteristicNotification(it, true) &&
+                setCharacteristicNotification(it, enable) &&
                     writeDescriptor(it.getEnableNotificationDescriptor())
             } ?: false
 
@@ -93,15 +133,19 @@ class BluetoothLeService(
                     }
                     val heartRate = characteristic.getIntValue(format, 1)
                     Log.d("BlueService", String.format("Received heart rate: %d", heartRate))
-                    intent.putExtra(Const.EXTRA_DATA, (heartRate).toString())
+                    intent.putExtra(Const.EXTRA_HEART_RATE_DATA, heartRate)
                 }
                 else -> {
                     val data: ByteArray? = characteristic.value
                     if (data?.isNotEmpty() == true) {
-                        val hexString: String = data.joinToString(separator = " ") {
-                            String.format("%02X", it)
+                        try {
+                            val intFromHex: Int = data.joinToString(separator = " ") {
+                                String.format("%02X", it)
+                            }.toInt()
+                            intent.putExtra(Const.EXTRA_HEART_RATE_DATA, intFromHex)
+                        } catch (ignored: Exception) {
                         }
-                        intent.putExtra(Const.EXTRA_DATA, "$data\n$hexString")
+
                     }
                 }
 

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -20,10 +21,12 @@ import com.example.wakewheel.R
 import com.example.wakewheel.heartrate.BleDevice
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.activity_ble_search.ble_search_button
+import kotlinx.android.synthetic.main.activity_ble_search.progressBar
 import kotlinx.android.synthetic.main.activity_ble_search.recyclerView
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
-class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
+@ExperimentalCoroutinesApi class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var devicesRecyclerAdapter: DevicesRecyclerAdapter
@@ -50,9 +53,9 @@ class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.addItemDecoration(DividerItemDecoration(activity, getRecyclerOrientation()))
 
-        ble_search_button.setOnClickListener {
+        ble_search_button?.setOnClickListener {
             if (!permissionsGranted()) requestPermissions()
-            else viewModel.onScanClick()
+            else handleScan()
         }
 
         viewModel.deviceList
@@ -68,9 +71,27 @@ class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
                         )
                     }
             }
+
+        //viewModel.showToast
+        //    .observe(viewLifecycleOwner) {
+        //        Toast.makeText(activity, it, Toast.LENGTH_LONG).show()
+        //    }
+
+        viewModel.deviceConnection
+            .observe(viewLifecycleOwner) {
+                Toast.makeText(activity, it.name, Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun handleScan() {
+        ble_search_button.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
+        viewModel.onScanClick()
     }
 
     private fun updateRecycler(list: List<BleDevice>) {
+        progressBar.visibility = View.GONE
+        ble_search_button.visibility = View.VISIBLE
         devicesRecyclerAdapter.deviceList = list
         devicesRecyclerAdapter.notifyDataSetChanged()
     }
@@ -82,8 +103,7 @@ class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
         (ContextCompat.checkSelfPermission(
             requireContext(),
             Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-            == PackageManager.PERMISSION_GRANTED)
+        ) == PackageManager.PERMISSION_GRANTED)
 
     private fun requestPermissions() {
         requestPermissions(

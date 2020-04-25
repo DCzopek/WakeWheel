@@ -2,6 +2,7 @@ package com.example.wakewheel.di
 
 import android.content.Context
 import com.example.wakewheel.heartrate.BleHandler
+import com.example.wakewheel.receivers.HeartRateEventBus
 import com.example.wakewheel.receivers.gatt.BluetoothGattController
 import com.example.wakewheel.receivers.gatt.BluetoothGattEventBus
 import com.example.wakewheel.services.BluetoothLeService
@@ -27,11 +28,13 @@ class BluetoothModule {
     @Provides
     fun provideBluetoothLeService(
         context: Context,
-        serviceBinder: BluetoothLeServiceBinder
+        serviceBinder: BluetoothLeServiceBinder,
+        gattEventBus: BluetoothGattEventBus
     ): BluetoothLeService =
         BluetoothLeService(
             context,
-            serviceBinder
+            serviceBinder,
+            gattEventBus
         )
 
     @Provides
@@ -39,11 +42,19 @@ class BluetoothModule {
         BluetoothLeServiceBinder()
 
     @Provides
-    fun provideBluetoothGattController(eventBus: BluetoothGattEventBus) =
-        BluetoothGattController(eventBus)
+    fun provideBluetoothGattController(
+        gattEventBus: BluetoothGattEventBus,
+        heartRateEventBus: HeartRateEventBus
+    ) =
+        BluetoothGattController(gattEventBus, heartRateEventBus)
 
     @Singleton
     @Provides
     fun provideBluetoothGattEventBus() =
         BluetoothGattEventBus()
+
+    @Singleton
+    @Provides
+    fun provideHeartRateEventBus() =
+        HeartRateEventBus()
 }

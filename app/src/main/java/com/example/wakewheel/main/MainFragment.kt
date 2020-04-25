@@ -14,6 +14,7 @@ import com.example.wakewheel.facerecognition.view.FaceRecognitionActivity
 import kotlinx.android.synthetic.main.fragment_main.btn_heart_rate
 import kotlinx.android.synthetic.main.fragment_main.dbTest
 import kotlinx.android.synthetic.main.fragment_main.face_recognition
+import kotlinx.android.synthetic.main.fragment_main.monitoring
 import permissions.dispatcher.NeedsPermission
 
 class MainFragment : Fragment() {
@@ -31,13 +32,16 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
 
-        // todo change this implementations to fragments
         face_recognition.setOnClickListener {
             //openFaceRecognition()
         }
 
         btn_heart_rate.setOnClickListener {
             navController.navigate(R.id.action_mainFragment_to_pairBleDeviceFragment)
+        }
+
+        monitoring.setOnClickListener {
+            navController.navigate(R.id.action_mainFragment_to_monitoringFragment)
         }
 
         dbTest.setOnClickListener {
