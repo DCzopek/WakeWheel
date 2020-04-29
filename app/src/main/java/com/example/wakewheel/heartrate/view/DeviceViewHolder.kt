@@ -4,7 +4,9 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.row_device.view.*
+import kotlinx.android.synthetic.main.row_device.view.mac_address
+import kotlinx.android.synthetic.main.row_device.view.pair
+import kotlinx.android.synthetic.main.row_device.view.tv_device_name
 
 class DeviceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 

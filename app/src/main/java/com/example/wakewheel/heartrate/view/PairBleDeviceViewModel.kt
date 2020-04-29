@@ -7,7 +7,6 @@ import com.example.wakewheel.heartrate.BleDevice
 import com.example.wakewheel.heartrate.BleHandler
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.DURING
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.FAIL
-import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.NONE
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.SUCCESS
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.TIMEOUT
 import com.example.wakewheel.receivers.gatt.BluetoothGattAction.CONNECT_TO_HEART_RATE_DEVICE_SUCCEED
@@ -32,11 +31,12 @@ class PairBleDeviceViewModel @Inject constructor(
 
     private var listenForHeartRateService: Job? = null
     private var listenForGattEvents: Job? = null
+    private var scanJob: Job? = null
 
-    val deviceConnection: LiveData<DeviceConnectionStatus>
+    val deviceConnection: SingleLiveEvent<DeviceConnectionStatus>
         get() = _deviceConnection
 
-    private val _deviceConnection = MutableLiveData(NONE)
+    private val _deviceConnection = SingleLiveEvent<DeviceConnectionStatus>()
 
     val deviceList: LiveData<List<BleDevice>>
         get() = _deviceList
@@ -47,11 +47,6 @@ class PairBleDeviceViewModel @Inject constructor(
         get() = _requestBluetoothEnable
 
     private val _requestBluetoothEnable = SingleLiveEvent<Any>()
-
-    val showToast: LiveData<String>
-        get() = _showToast
-
-    private val _showToast = SingleLiveEvent<String>()
 
     init {
         listenForGattEvents = MainScope().launch {
@@ -73,17 +68,7 @@ class PairBleDeviceViewModel @Inject constructor(
         super.onCleared()
         listenForGattEvents?.cancel()
         listenForGattEvents = null
-    }
-
-    fun onScanClick() {
-        if (bleHandler.isBluetoothEnabled()) {
-            MainScope().launch {
-                bleHandler.scanForBle()
-                    .let { devices -> _deviceList.postValue(devices) }
-            }
-        } else {
-            _requestBluetoothEnable.call()
-        }
+        stopScanning()
     }
 
     fun onPairClicked(macAddress: String) {
@@ -103,6 +88,30 @@ class PairBleDeviceViewModel @Inject constructor(
         }
     }
 
+    fun startScanning() {
+        scanJob = MainScope().launch {
+            while (true) {
+                performScan()
+                delay(SCAN_PERIOD_TIME)
+            }
+        }
+    }
+
+    fun stopScanning() {
+        scanJob?.cancel()
+    }
+
+    private fun performScan() {
+        if (bleHandler.isBluetoothEnabled()) {
+            MainScope().launch {
+                bleHandler.scanForBle()
+                    .let { devices -> _deviceList.postValue(devices) }
+            }
+        } else {
+            _requestBluetoothEnable.call()
+        }
+    }
+
     private fun lazyConnectHeartRateService() {
         listenForHeartRateService = MainScope().launch {
             gattEventBus.listen()
@@ -118,5 +127,6 @@ class PairBleDeviceViewModel @Inject constructor(
 
     companion object {
         private const val CONNECTION_TIMEOUT = 30_000L
+        private const val SCAN_PERIOD_TIME = 15_000L
     }
 }

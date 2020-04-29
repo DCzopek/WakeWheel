@@ -13,4 +13,11 @@
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
+
+    <string name="device_status_during">Start pairing your device</string>
+    <string name="device_status_success">Device successfully paired</string>
+    <string name="device_status_fail">Device pair fails</string>
+    <string name="device_status_timeout">Device pair fails. Connecting timeouts.</string>
+    <string name="location_permissions_rationale">This permissions is necessary to search Bluetooth devices, if you deny it permanently you will not be able to use the app fully functional !</string>
+    <string name="permission_denied_message">You permanently denied needed permissions. To perform this action please go to this app settings and enable needed permissions.</string>
 </resources>
