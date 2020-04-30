@@ -37,6 +37,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_heart_rate" />
 
+    <Button
+        android:id="@+id/connect_paired_device"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Connect paired device"
+        app:layout_constraintBottom_toTopOf="@id/bluetooth"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/device_search" />
+
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"

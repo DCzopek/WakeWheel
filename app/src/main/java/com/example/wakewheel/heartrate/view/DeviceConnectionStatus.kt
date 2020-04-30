@@ -5,5 +5,5 @@ enum class DeviceConnectionStatus {
     SUCCESS,
     FAIL,
     TIMEOUT,
-    NONE
+    NO_HEART_RATE
 }

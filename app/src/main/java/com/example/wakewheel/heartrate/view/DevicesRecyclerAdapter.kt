@@ -32,7 +32,7 @@ class DevicesRecyclerAdapter(private val clickListener: DeviceRecyclerClickListe
         position: Int
     ) {
         holder.deviceName.text = deviceList[position].name
-        holder.deviceAddress.text = deviceList[position].macAddress
+        holder.deviceAddress.text = deviceList[position].address
 
         holder.pair.setOnClickListener {
             clickListener.onPairClicked(holder.deviceAddress.text.toString())

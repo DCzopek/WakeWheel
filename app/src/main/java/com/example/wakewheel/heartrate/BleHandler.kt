@@ -22,14 +22,17 @@ class BleHandler(
     private val deviceList: HashSet<BluetoothDevice> = hashSetOf()
 
     fun connectDevice(deviceMac: String) {
-        deviceList
-            .first { it.address == deviceMac }
-            .let { service.connectDevice(it) }
+        getDevice(deviceMac)
+            ?.let { service.connectDevice(it) }
+            ?: service.connectDevice(bluetoothAdapter.getRemoteDevice(deviceMac))
     }
 
     fun connectHeartRateService() {
         service.connectToHeartRateService()
     }
+
+    fun getCurrentlyConnectedDevice(): BluetoothDevice? =
+        service.connectedDevice()
 
     suspend fun scanForBle(): List<BleDevice> {
         bluetoothLeScanner.startScan(leScanCallback)
@@ -37,6 +40,10 @@ class BleHandler(
         bluetoothLeScanner.stopScan(leScanCallback)
         return deviceList.toList().map { BleDevice(it.name ?: "Undefined", it.address) }
     }
+
+    private fun getDevice(deviceMac: String): BluetoothDevice? =
+        deviceList
+            .firstOrNull { it.address == deviceMac }
 
     private val leScanCallback = object : ScanCallback() {
 

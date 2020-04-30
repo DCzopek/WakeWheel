@@ -15,25 +15,23 @@ import dagger.android.HasServiceInjector
 import dagger.android.support.HasSupportFragmentInjector
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 class App : Application(),
     HasBroadcastReceiverInjector,
     HasActivityInjector,
     HasServiceInjector,
     HasSupportFragmentInjector {
 
-    @Inject
-    lateinit var receiverInjector: DispatchingAndroidInjector<BroadcastReceiver>
+    @Inject lateinit var receiverInjector: DispatchingAndroidInjector<BroadcastReceiver>
 
-    @Inject
-    lateinit var activityInjector: DispatchingAndroidInjector<Activity>
+    @Inject lateinit var activityInjector: DispatchingAndroidInjector<Activity>
 
-    @Inject
-    lateinit var serviceInjector: DispatchingAndroidInjector<Service>
+    @Inject lateinit var serviceInjector: DispatchingAndroidInjector<Service>
 
-    @Inject
-    lateinit var supportFragmentInjector: DispatchingAndroidInjector<Fragment>
+    @Inject lateinit var supportFragmentInjector: DispatchingAndroidInjector<Fragment>
 
     override fun onCreate() {
         super.onCreate()

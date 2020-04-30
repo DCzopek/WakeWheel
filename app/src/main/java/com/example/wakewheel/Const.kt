@@ -15,4 +15,5 @@ object Const {
     const val EXTRA_HEART_RATE_DATA = "com.example.wakewheel.EXTRA_HEART_RATE_DATA"
     val UUID_HEART_RATE_MEASUREMENT: UUID = UUID.fromString(GattAttributes.HEART_RATE_MEASUREMENT)
     const val FACE_RECOGNITION_TAG = "FaceRecognitionScreen"
+    const val BLUETOOTH_CONNECTION_TIMEOUT = 30_000L
 }
