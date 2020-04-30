@@ -22,6 +22,7 @@ import com.example.wakewheel.R
 import com.example.wakewheel.heartrate.BleDevice
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.DURING
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.FAIL
+import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.NO_HEART_RATE
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.SUCCESS
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.TIMEOUT
 import com.google.android.material.snackbar.Snackbar
@@ -36,7 +37,7 @@ class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var devicesRecyclerAdapter: DevicesRecyclerAdapter
-    private lateinit var viewModel: PairBleDeviceViewModel
+    private lateinit var viewModel: ManageBleDeviceViewModel
     private lateinit var navController: NavController
 
     private var firstScan = true
@@ -53,7 +54,7 @@ class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel =
-            ViewModelProvider(this, viewModelFactory).get(PairBleDeviceViewModel::class.java)
+            ViewModelProvider(this, viewModelFactory).get(ManageBleDeviceViewModel::class.java)
         navController = findNavController()
         devicesRecyclerAdapter = DevicesRecyclerAdapter(this)
 
@@ -91,6 +92,10 @@ class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
                     }
                     FAIL -> {
                         showSnackbar(view, R.string.device_status_fail)
+                        showRecycler()
+                    }
+                    NO_HEART_RATE -> {
+                        showSnackbar(view, R.string.device_status_no_heart_rate)
                         showRecycler()
                     }
                 }

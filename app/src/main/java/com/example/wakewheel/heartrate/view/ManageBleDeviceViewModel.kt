@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.wakewheel.heartrate.BleDevice
 import com.example.wakewheel.heartrate.BleHandler
+import com.example.wakewheel.heartrate.BluetoothDeviceRepo
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.DURING
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.FAIL
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.SUCCESS
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.TIMEOUT
+import com.example.wakewheel.receivers.HeartRateEventBus
 import com.example.wakewheel.receivers.gatt.BluetoothGattAction.CONNECT_TO_HEART_RATE_DEVICE_SUCCEED
 import com.example.wakewheel.receivers.gatt.BluetoothGattAction.HEART_SERVICE_DISCOVERED
 import com.example.wakewheel.receivers.gatt.BluetoothGattAction.SET_NOTIFICATION_FAILS
@@ -24,9 +26,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class PairBleDeviceViewModel @Inject constructor(
+class ManageBleDeviceViewModel @Inject constructor(
     private val bleHandler: BleHandler,
-    private val gattEventBus: BluetoothGattEventBus
+    private val gattEventBus: BluetoothGattEventBus,
+    private val heartRateEventBus: HeartRateEventBus,
+    private val repo: BluetoothDeviceRepo
 ) : ViewModel() {
 
     private var listenForHeartRateService: Job? = null
@@ -56,12 +60,42 @@ class PairBleDeviceViewModel @Inject constructor(
                     when (it) {
                         SET_NOTIFICATION_FAILS_NO_CONNECTED_DEVICE,
                         SET_NOTIFICATION_FAILS -> _deviceConnection.postValue(FAIL)
-                        CONNECT_TO_HEART_RATE_DEVICE_SUCCEED -> _deviceConnection.postValue(SUCCESS)
+                        CONNECT_TO_HEART_RATE_DEVICE_SUCCEED -> handleSuccess()
                         else -> {
                         }
                     }
                 }
         }
+    }
+
+    private fun handleSuccess() {
+        var dataReceived = false
+        val channel = heartRateEventBus.listen()
+            .openSubscription()
+
+        MainScope().launch {
+            channel
+                .receive()
+                .let {
+                    dataReceived = true
+                    _deviceConnection.postValue(SUCCESS)
+                    saveDevice()
+                    channel.cancel()
+                }
+        }
+
+        MainScope().launch {
+            delay(5000L)
+            if (!dataReceived) {
+                _deviceConnection.postValue(DeviceConnectionStatus.NO_HEART_RATE)
+            }
+            channel.cancel()
+        }
+    }
+
+    private fun saveDevice() {
+        bleHandler.getCurrentlyConnectedDevice()
+            ?.let { repo.insertOrUpdate(it) }
     }
 
     override fun onCleared() {

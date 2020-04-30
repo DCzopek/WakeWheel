@@ -15,6 +15,7 @@ import dagger.android.HasServiceInjector
 import dagger.android.support.HasSupportFragmentInjector
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
 class App : Application(),
@@ -35,6 +36,7 @@ class App : Application(),
     @Inject
     lateinit var supportFragmentInjector: DispatchingAndroidInjector<Fragment>
 
+    @ExperimentalCoroutinesApi
     override fun onCreate() {
         super.onCreate()
 

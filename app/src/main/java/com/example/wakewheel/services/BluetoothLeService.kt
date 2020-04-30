@@ -76,6 +76,9 @@ class BluetoothLeService(
         }
     }
 
+    fun connectedDevice(): BluetoothDevice? =
+        connectedDevice?.device
+
     private fun BluetoothGatt.setNotification(enable: Boolean): Boolean =
         getHeartRateCharacteristics()
             ?.let {

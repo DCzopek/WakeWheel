@@ -4,17 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.wakewheel.R
 import com.example.wakewheel.heartrate.BleHandler
+import com.example.wakewheel.heartrate.BluetoothDeviceRepo
 import com.example.wakewheel.receivers.HeartRateEventBus
-import com.example.wakewheel.receivers.gatt.BluetoothGattEventBus
 import com.example.wakewheel.services.BluetoothLeService
+import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.fragment_heart_rate.connect_paired_device
 import kotlinx.android.synthetic.main.fragment_heart_rate.device_search
 import kotlinx.android.synthetic.main.fragment_heart_rate.receive_heart_rate
 import kotlinx.android.synthetic.main.fragment_heart_rate.tv_heart_rate
@@ -31,15 +33,16 @@ class PairBleDeviceFragment : Fragment() {
     @Inject lateinit var bluetoothLeService: BluetoothLeService
     @Inject lateinit var bleHandler: BleHandler
 
+    // for test only - remove after finish
+    @Inject lateinit var repo: BluetoothDeviceRepo
+
     // todo event buses should be move to viewModel
-    @Inject lateinit var bleEventBus: BluetoothGattEventBus
     @Inject lateinit var eventBus: HeartRateEventBus
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: PairBleDeviceViewModel
+    private lateinit var viewModel: ManageBleDeviceViewModel
     private lateinit var navController: NavController
     private var heartRateListen: Job? = null
-    private var bleDeviceListen: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,7 +56,7 @@ class PairBleDeviceFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel =
-            ViewModelProvider(this, viewModelFactory).get(PairBleDeviceViewModel::class.java)
+            ViewModelProvider(this, viewModelFactory).get(ManageBleDeviceViewModel::class.java)
 
         navController = findNavController()
 
@@ -61,6 +64,15 @@ class PairBleDeviceFragment : Fragment() {
             navController.navigate(R.id.action_pairBleDeviceFragment_to_searchBleDeviceFragment)
         }
 
+        viewModel.deviceConnection
+            .observe(viewLifecycleOwner) {
+                Snackbar.make(view, it.name, Snackbar.LENGTH_SHORT).show()
+            }
+
+        connect_paired_device.setOnClickListener {
+            repo.fetch()
+                ?.let { viewModel.onPairClicked(it.address) }
+        }
     }
 
     override fun onResume() {
@@ -70,23 +82,11 @@ class PairBleDeviceFragment : Fragment() {
             if (isChecked) listenForHeartRate()
             else heartRateListen?.cancel()
         }
-        listenForBleDeviceEvents()
     }
 
     override fun onPause() {
         super.onPause()
         heartRateListen?.cancel()
-        bleDeviceListen?.cancel()
-    }
-
-    private fun listenForBleDeviceEvents() {
-        bleDeviceListen = MainScope().launch {
-            bleEventBus.listen()
-                .openSubscription()
-                .consumeEach {
-                    Toast.makeText(activity, it.name, Toast.LENGTH_SHORT).show()
-                }
-        }
     }
 
     private fun listenForHeartRate() {

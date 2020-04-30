@@ -1,4 +1,4 @@
-package com.example.wakewheel.realm
+package com.example.wakewheel.data
 
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey

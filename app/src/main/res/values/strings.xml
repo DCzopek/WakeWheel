@@ -18,6 +18,7 @@
     <string name="device_status_success">Device successfully paired</string>
     <string name="device_status_fail">Device pair fails</string>
     <string name="device_status_timeout">Device pair fails. Connecting timeouts.</string>
+    <string name="device_status_no_heart_rate">Cannot establish connection. No heart rate received.</string>
     <string name="location_permissions_rationale">This permissions is necessary to search Bluetooth devices, if you deny it permanently you will not be able to use the app fully functional !</string>
     <string name="permission_denied_message">You permanently denied needed permissions. To perform this action please go to this app settings and enable needed permissions.</string>
 </resources>

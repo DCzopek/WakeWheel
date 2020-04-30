@@ -3,12 +3,16 @@ package com.example.wakewheel.di
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import io.realm.Realm
 
 @Module
-class AppModule (
+class AppModule(
     val context: Context
-){
+) {
 
-    @Provides fun provideContext ()  =
+    @Provides fun provideContext() =
         this.context
+
+    @Provides fun provideRealm(): Realm =
+        Realm.getDefaultInstance()
 }
