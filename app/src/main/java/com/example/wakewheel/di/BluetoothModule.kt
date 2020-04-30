@@ -3,8 +3,13 @@ package com.example.wakewheel.di
 import android.content.Context
 import com.example.wakewheel.data.device.BluetoothDeviceMapper
 import com.example.wakewheel.data.device.RealmBluetoothDeviceRepo
+import com.example.wakewheel.heartrate.AutoConnectBleDeviceOnStart
+import com.example.wakewheel.heartrate.BleDeviceConnectionApi
 import com.example.wakewheel.heartrate.BleHandler
+import com.example.wakewheel.heartrate.BluetoothDeviceConnectionObserver
 import com.example.wakewheel.heartrate.BluetoothDeviceRepo
+import com.example.wakewheel.heartrate.ConnectBleDevice
+import com.example.wakewheel.heartrate.InMemoryBleDeviceConnectionRepo
 import com.example.wakewheel.receivers.HeartRateEventBus
 import com.example.wakewheel.receivers.gatt.BluetoothGattController
 import com.example.wakewheel.receivers.gatt.BluetoothGattEventBus
@@ -48,9 +53,10 @@ class BluetoothModule {
     @Provides
     fun provideBluetoothGattController(
         gattEventBus: BluetoothGattEventBus,
-        heartRateEventBus: HeartRateEventBus
+        heartRateEventBus: HeartRateEventBus,
+        connectionObserver: BluetoothDeviceConnectionObserver
     ) =
-        BluetoothGattController(gattEventBus, heartRateEventBus)
+        BluetoothGattController(gattEventBus, heartRateEventBus, connectionObserver)
 
     @Singleton
     @Provides
@@ -72,4 +78,30 @@ class BluetoothModule {
         mapper: BluetoothDeviceMapper
     ): BluetoothDeviceRepo =
         RealmBluetoothDeviceRepo(realm, mapper)
+
+    @Singleton
+    @Provides
+    fun provideBleDeviceConnectionRepo(): BleDeviceConnectionApi =
+        InMemoryBleDeviceConnectionRepo()
+
+    @Provides
+    fun provideConnectBleDevice(
+        bleHandler: BleHandler,
+        gattEventBus: BluetoothGattEventBus
+    ) =
+        ConnectBleDevice(bleHandler, gattEventBus)
+
+    @Provides
+    fun provideAutoConnectBleDeviceOnStart(
+        connectBleDevice: ConnectBleDevice,
+        heartRateEventBus: HeartRateEventBus,
+        deviceRepo: BluetoothDeviceRepo,
+        connectionApi: BleDeviceConnectionApi
+    ) =
+        AutoConnectBleDeviceOnStart(connectBleDevice, heartRateEventBus, deviceRepo, connectionApi)
+
+    @Singleton
+    @Provides
+    fun provideBluetoothDeviceConnectionObserver(api: BleDeviceConnectionApi) =
+        BluetoothDeviceConnectionObserver(api)
 }

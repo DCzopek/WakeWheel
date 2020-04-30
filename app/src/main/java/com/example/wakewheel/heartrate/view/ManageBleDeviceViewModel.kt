@@ -3,16 +3,18 @@ package com.example.wakewheel.heartrate.view
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.wakewheel.Const
 import com.example.wakewheel.heartrate.BleDevice
+import com.example.wakewheel.heartrate.BleDeviceConnectionApi
 import com.example.wakewheel.heartrate.BleHandler
 import com.example.wakewheel.heartrate.BluetoothDeviceRepo
+import com.example.wakewheel.heartrate.ConnectBleDevice
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.DURING
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.FAIL
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.SUCCESS
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.TIMEOUT
 import com.example.wakewheel.receivers.HeartRateEventBus
 import com.example.wakewheel.receivers.gatt.BluetoothGattAction.CONNECT_TO_HEART_RATE_DEVICE_SUCCEED
-import com.example.wakewheel.receivers.gatt.BluetoothGattAction.HEART_SERVICE_DISCOVERED
 import com.example.wakewheel.receivers.gatt.BluetoothGattAction.SET_NOTIFICATION_FAILS
 import com.example.wakewheel.receivers.gatt.BluetoothGattAction.SET_NOTIFICATION_FAILS_NO_CONNECTED_DEVICE
 import com.example.wakewheel.receivers.gatt.BluetoothGattEventBus
@@ -30,12 +32,15 @@ class ManageBleDeviceViewModel @Inject constructor(
     private val bleHandler: BleHandler,
     private val gattEventBus: BluetoothGattEventBus,
     private val heartRateEventBus: HeartRateEventBus,
-    private val repo: BluetoothDeviceRepo
+    private val repo: BluetoothDeviceRepo,
+    private val connectBleDevice: ConnectBleDevice,
+    private val connectionApi: BleDeviceConnectionApi
 ) : ViewModel() {
 
-    private var listenForHeartRateService: Job? = null
     private var listenForGattEvents: Job? = null
     private var scanJob: Job? = null
+
+    private var pairing = false
 
     val deviceConnection: SingleLiveEvent<DeviceConnectionStatus>
         get() = _deviceConnection
@@ -79,8 +84,11 @@ class ManageBleDeviceViewModel @Inject constructor(
                 .let {
                     dataReceived = true
                     _deviceConnection.postValue(SUCCESS)
-                    saveDevice()
                     channel.cancel()
+                    if (pairing) {
+                        saveDevice()
+                        pairing = false
+                    }
                 }
         }
 
@@ -105,19 +113,23 @@ class ManageBleDeviceViewModel @Inject constructor(
         stopScanning()
     }
 
+    fun onConnectClicked() {
+        repo.fetch()
+            ?.let { connect(it.address) }
+    }
+
     fun onPairClicked(macAddress: String) {
+        pairing = true
+        connect(macAddress)
+    }
+
+    private fun connect(macAddress: String) {
         _deviceConnection.postValue(DURING)
         MainScope().launch {
-            bleHandler.connectDevice(macAddress)
-            lazyConnectHeartRateService()
-
-            delay(CONNECTION_TIMEOUT)
-
-            listenForHeartRateService?.let {
-                if (it.isActive) {
-                    _deviceConnection.postValue(TIMEOUT)
-                    it.cancel()
-                }
+            connectBleDevice(macAddress)
+            delay(Const.BLUETOOTH_CONNECTION_TIMEOUT)
+            if (deviceConnection.value == DURING) {
+                _deviceConnection.postValue(TIMEOUT)
             }
         }
     }
@@ -146,21 +158,7 @@ class ManageBleDeviceViewModel @Inject constructor(
         }
     }
 
-    private fun lazyConnectHeartRateService() {
-        listenForHeartRateService = MainScope().launch {
-            gattEventBus.listen()
-                .openSubscription()
-                .consumeEach {
-                    if (it == HEART_SERVICE_DISCOVERED) {
-                        bleHandler.connectHeartRateService()
-                        listenForHeartRateService?.cancel()
-                    }
-                }
-        }
-    }
-
     companion object {
-        private const val CONNECTION_TIMEOUT = 30_000L
         private const val SCAN_PERIOD_TIME = 15_000L
     }
 }

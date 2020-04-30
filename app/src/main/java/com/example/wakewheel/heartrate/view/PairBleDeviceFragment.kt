@@ -10,8 +10,8 @@ import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.wakewheel.R
+import com.example.wakewheel.heartrate.BleDeviceConnectionApi
 import com.example.wakewheel.heartrate.BleHandler
-import com.example.wakewheel.heartrate.BluetoothDeviceRepo
 import com.example.wakewheel.receivers.HeartRateEventBus
 import com.example.wakewheel.services.BluetoothLeService
 import com.google.android.material.snackbar.Snackbar
@@ -19,6 +19,7 @@ import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_heart_rate.connect_paired_device
 import kotlinx.android.synthetic.main.fragment_heart_rate.device_search
 import kotlinx.android.synthetic.main.fragment_heart_rate.receive_heart_rate
+import kotlinx.android.synthetic.main.fragment_heart_rate.textView3
 import kotlinx.android.synthetic.main.fragment_heart_rate.tv_heart_rate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -32,9 +33,7 @@ class PairBleDeviceFragment : Fragment() {
 
     @Inject lateinit var bluetoothLeService: BluetoothLeService
     @Inject lateinit var bleHandler: BleHandler
-
-    // for test only - remove after finish
-    @Inject lateinit var repo: BluetoothDeviceRepo
+    @Inject lateinit var connectionApi: BleDeviceConnectionApi
 
     // todo event buses should be move to viewModel
     @Inject lateinit var eventBus: HeartRateEventBus
@@ -64,15 +63,20 @@ class PairBleDeviceFragment : Fragment() {
             navController.navigate(R.id.action_pairBleDeviceFragment_to_searchBleDeviceFragment)
         }
 
+        connect_paired_device.setOnClickListener {
+            viewModel.onConnectClicked()
+        }
+
         viewModel.deviceConnection
             .observe(viewLifecycleOwner) {
                 Snackbar.make(view, it.name, Snackbar.LENGTH_SHORT).show()
             }
 
-        connect_paired_device.setOnClickListener {
-            repo.fetch()
-                ?.let { viewModel.onPairClicked(it.address) }
-        }
+        connectionApi.deviceConnection
+            .observe(viewLifecycleOwner) { connected ->
+                if (connected) textView3.text = "Connected"
+                else textView3.text = "Not connected"
+            }
     }
 
     override fun onResume() {
