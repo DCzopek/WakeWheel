@@ -32,7 +32,7 @@
         tools:layout="@layout/activity_ble_search"/>
     <fragment
         android:id="@+id/monitoringFragment"
-        android:name="com.example.wakewheel.main.MonitoringFragment"
+        android:name="com.example.wakewheel.monitoring.MonitoringFragment"
         android:label="MonitoringFragment"
         tools:layout="@layout/fragment_monitoring">
         <action
@@ -41,11 +41,7 @@
     </fragment>
     <fragment
         android:id="@+id/alarmFragment"
-        android:name="com.example.wakewheel.main.AlarmFragment"
+        android:name="com.example.wakewheel.monitoring.AlarmFragment"
         android:label="AlarmFragment"
-        tools:layout="@layout/fragmetn_alarm">
-        <action
-            android:id="@+id/action_alarmFragment_to_monitoringFragment"
-            app:destination="@id/monitoringFragment" />
-    </fragment>
+        tools:layout="@layout/fragmetn_alarm"/>
 </navigation>

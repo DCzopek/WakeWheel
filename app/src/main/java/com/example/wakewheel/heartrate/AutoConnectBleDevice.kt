@@ -10,7 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
-class AutoConnectBleDeviceOnStart(
+class AutoConnectBleDevice(
     private val connectBleDevice: ConnectBleDevice,
     private val heartRateEventBus: HeartRateEventBus,
     private val deviceRepo: BluetoothDeviceRepo,

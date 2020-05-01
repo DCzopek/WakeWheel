@@ -40,21 +40,66 @@
         android:id="@+id/bpm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_large"
         android:background="@drawable/alarm_background_ok"
-        android:padding="10dp"
-        android:textSize="25sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center"
+        android:padding="@dimen/padding_default"
+        android:text="0"
+        android:textSize="@dimen/bpm_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/container_guideline"
-        tools:text="130 Bpm" />
+        tools:ignore="HardcodedText"
+        tools:text="120" />
 
-    <Button
-        android:id="@+id/alarm"
+    <TextView
+        android:id="@+id/bpm_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ALARM"
+        android:layout_margin="@dimen/margin_default"
+        android:text="@string/bpm"
+        android:textSize="@dimen/bpm_text_size"
+        app:layout_constraintBottom_toBottomOf="@id/bpm"
+        app:layout_constraintStart_toEndOf="@id/bpm"
+        app:layout_constraintTop_toTopOf="@id/bpm" />
+
+    <Button
+        android:id="@+id/start_monitoring"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_large"
+        android:text="Start monitoring"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/bluetooth"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="20dp"
+        android:src="@drawable/ic_bluetooth_connected_black_24dp"
+        app:layout_constraintBottom_toBottomOf="@id/bpm"
+        app:layout_constraintEnd_toStartOf="@id/center_guideline"
+        app:layout_constraintStart_toStartOf="@id/camera_container"
+        app:layout_constraintTop_toTopOf="@id/bpm" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/center_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <TextView
+        android:id="@+id/face"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@id/alarm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bpm" />
+        app:layout_constraintTop_toBottomOf="@id/bpm"
+        tools:text="Eyes are open" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

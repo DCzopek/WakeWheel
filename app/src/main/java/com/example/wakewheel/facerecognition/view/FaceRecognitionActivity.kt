@@ -13,7 +13,8 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.google.firebase.ml.vision.face.FirebaseVisionFace
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
 import com.otaliastudios.cameraview.Frame
-import kotlinx.android.synthetic.main.activity_face_recognition.*
+import kotlinx.android.synthetic.main.activity_face_recognition.camera
+import kotlinx.android.synthetic.main.activity_face_recognition.text
 
 class FaceRecognitionActivity : AppCompatActivity() {
 

@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.wakewheel.Const
 import com.example.wakewheel.heartrate.BleDevice
-import com.example.wakewheel.heartrate.BleDeviceConnectionApi
 import com.example.wakewheel.heartrate.BleHandler
 import com.example.wakewheel.heartrate.BluetoothDeviceRepo
 import com.example.wakewheel.heartrate.ConnectBleDevice
@@ -33,8 +32,7 @@ class ManageBleDeviceViewModel @Inject constructor(
     private val gattEventBus: BluetoothGattEventBus,
     private val heartRateEventBus: HeartRateEventBus,
     private val repo: BluetoothDeviceRepo,
-    private val connectBleDevice: ConnectBleDevice,
-    private val connectionApi: BleDeviceConnectionApi
+    private val connectBleDevice: ConnectBleDevice
 ) : ViewModel() {
 
     private var listenForGattEvents: Job? = null
@@ -42,20 +40,14 @@ class ManageBleDeviceViewModel @Inject constructor(
 
     private var pairing = false
 
-    val deviceConnection: SingleLiveEvent<DeviceConnectionStatus>
-        get() = _deviceConnection
-
-    private val _deviceConnection = SingleLiveEvent<DeviceConnectionStatus>()
+    val deviceConnection = SingleLiveEvent<DeviceConnectionStatus>()
 
     val deviceList: LiveData<List<BleDevice>>
         get() = _deviceList
 
     private val _deviceList = MutableLiveData<List<BleDevice>>()
 
-    val requestBluetoothEnable: LiveData<Any>
-        get() = _requestBluetoothEnable
-
-    private val _requestBluetoothEnable = SingleLiveEvent<Any>()
+    val requestBluetoothEnable = SingleLiveEvent<Any>()
 
     init {
         listenForGattEvents = MainScope().launch {
@@ -64,7 +56,7 @@ class ManageBleDeviceViewModel @Inject constructor(
                 .consumeEach {
                     when (it) {
                         SET_NOTIFICATION_FAILS_NO_CONNECTED_DEVICE,
-                        SET_NOTIFICATION_FAILS -> _deviceConnection.postValue(FAIL)
+                        SET_NOTIFICATION_FAILS -> deviceConnection.postValue(FAIL)
                         CONNECT_TO_HEART_RATE_DEVICE_SUCCEED -> handleSuccess()
                         else -> {
                         }
@@ -83,7 +75,7 @@ class ManageBleDeviceViewModel @Inject constructor(
                 .receive()
                 .let {
                     dataReceived = true
-                    _deviceConnection.postValue(SUCCESS)
+                    deviceConnection.postValue(SUCCESS)
                     channel.cancel()
                     if (pairing) {
                         saveDevice()
@@ -95,7 +87,7 @@ class ManageBleDeviceViewModel @Inject constructor(
         MainScope().launch {
             delay(5000L)
             if (!dataReceived) {
-                _deviceConnection.postValue(DeviceConnectionStatus.NO_HEART_RATE)
+                deviceConnection.postValue(DeviceConnectionStatus.NO_HEART_RATE)
             }
             channel.cancel()
         }
@@ -124,12 +116,12 @@ class ManageBleDeviceViewModel @Inject constructor(
     }
 
     private fun connect(macAddress: String) {
-        _deviceConnection.postValue(DURING)
+        deviceConnection.postValue(DURING)
         MainScope().launch {
             connectBleDevice(macAddress)
             delay(Const.BLUETOOTH_CONNECTION_TIMEOUT)
             if (deviceConnection.value == DURING) {
-                _deviceConnection.postValue(TIMEOUT)
+                deviceConnection.postValue(TIMEOUT)
             }
         }
     }
@@ -154,7 +146,7 @@ class ManageBleDeviceViewModel @Inject constructor(
                     .let { devices -> _deviceList.postValue(devices) }
             }
         } else {
-            _requestBluetoothEnable.call()
+            requestBluetoothEnable.call()
         }
     }
 

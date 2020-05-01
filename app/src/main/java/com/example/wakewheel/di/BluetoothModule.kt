@@ -3,7 +3,7 @@ package com.example.wakewheel.di
 import android.content.Context
 import com.example.wakewheel.data.device.BluetoothDeviceMapper
 import com.example.wakewheel.data.device.RealmBluetoothDeviceRepo
-import com.example.wakewheel.heartrate.AutoConnectBleDeviceOnStart
+import com.example.wakewheel.heartrate.AutoConnectBleDevice
 import com.example.wakewheel.heartrate.BleDeviceConnectionApi
 import com.example.wakewheel.heartrate.BleHandler
 import com.example.wakewheel.heartrate.BluetoothDeviceConnectionObserver
@@ -92,13 +92,13 @@ class BluetoothModule {
         ConnectBleDevice(bleHandler, gattEventBus)
 
     @Provides
-    fun provideAutoConnectBleDeviceOnStart(
+    fun provideAutoConnectBleDevice(
         connectBleDevice: ConnectBleDevice,
         heartRateEventBus: HeartRateEventBus,
         deviceRepo: BluetoothDeviceRepo,
         connectionApi: BleDeviceConnectionApi
     ) =
-        AutoConnectBleDeviceOnStart(connectBleDevice, heartRateEventBus, deviceRepo, connectionApi)
+        AutoConnectBleDevice(connectBleDevice, heartRateEventBus, deviceRepo, connectionApi)
 
     @Singleton
     @Provides
