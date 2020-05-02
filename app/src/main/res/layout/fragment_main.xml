@@ -8,52 +8,26 @@
     tools:context=".main.MainActivity">
 
     <Button
-        android:id="@+id/face_recognition"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Face recognition"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_heart_rate" />
-
-    <Button
         android:id="@+id/monitoring"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_margin="@dimen/margin_default"
         android:text="Enable monitoring"
-        app:layout_constraintBottom_toTopOf="@id/dbTest"
+        app:layout_constraintBottom_toTopOf="@+id/btn_heart_rate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/face_recognition" />
-
-    <Button
-        android:id="@+id/btn_heart_rate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Heart rate"
-        app:layout_constraintBottom_toTopOf="@+id/face_recognition"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <Button
-        android:id="@+id/dbTest"
+        android:id="@+id/btn_heart_rate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Db test"
+        android:layout_margin="@dimen/margin_default"
+        android:text="Heart rate"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/face_recognition" />
+        app:layout_constraintTop_toBottomOf="@+id/monitoring" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

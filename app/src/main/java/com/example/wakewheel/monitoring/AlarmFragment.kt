@@ -52,7 +52,6 @@ class AlarmFragment : Fragment(), BackPressListener {
 
         audioManager = activity?.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-
         ok.setOnClickListener {
             player?.stop()
             viewModel.stopMonitor()

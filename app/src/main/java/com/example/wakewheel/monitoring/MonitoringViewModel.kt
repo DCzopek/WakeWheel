@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.wakewheel.Const
 import com.example.wakewheel.extensions.visionImageRotation
+import com.example.wakewheel.receivers.EyesMeasurementEventBus
 import com.example.wakewheel.utils.SingleLiveEvent
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class MonitoringViewModel @Inject constructor(
-    private val sleepMonitor: SleepMonitor
+    private val sleepMonitor: SleepMonitor,
+    private val eyesMeasurementEventBus: EyesMeasurementEventBus
 ) : ViewModel() {
 
     private var detectionInProgress = false
@@ -72,8 +74,17 @@ class MonitoringViewModel @Inject constructor(
                             if (face.leftEyeOpenProbability != FirebaseVisionFace.UNCOMPUTED_PROBABILITY &&
                                 face.rightEyeOpenProbability != FirebaseVisionFace.UNCOMPUTED_PROBABILITY
                             ) {
-                                val leftEyeProb = face.leftEyeOpenProbability
-                                val rightEyeProb = face.rightEyeOpenProbability
+                                // swap done intentionally because of the front camera
+                                val leftEyeProb = face.rightEyeOpenProbability
+                                val rightEyeProb = face.leftEyeOpenProbability
+
+                                eyesMeasurementEventBus.send(
+                                    EyesMeasurement(
+                                        leftOpenProbability = leftEyeProb,
+                                        rightOpenProbability = rightEyeProb
+                                    )
+                                )
+
                                 Log.d(
                                     Const.FACE_RECOGNITION_TAG,
                                     "Eyes prob: left -> $leftEyeProb   right -> $rightEyeProb"
@@ -108,5 +119,4 @@ class MonitoringViewModel @Inject constructor(
             .setFormat(FirebaseVisionImageMetadata.IMAGE_FORMAT_NV21)
             .setRotation(frame.visionImageRotation())
             .build()
-
 }
