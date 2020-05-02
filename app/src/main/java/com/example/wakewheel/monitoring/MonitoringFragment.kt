@@ -1,26 +1,25 @@
-package com.example.wakewheel.heartrate.view
+package com.example.wakewheel.monitoring
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.wakewheel.R
+import com.example.wakewheel.heartrate.AutoConnectBleDevice
 import com.example.wakewheel.heartrate.BleDeviceConnectionApi
-import com.example.wakewheel.heartrate.BleHandler
 import com.example.wakewheel.receivers.HeartRateEventBus
-import com.example.wakewheel.services.BluetoothLeService
-import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.activity_face_recognition.camera
 import kotlinx.android.synthetic.main.fragment_heart_rate.bluetooth
-import kotlinx.android.synthetic.main.fragment_heart_rate.connect_paired_device
-import kotlinx.android.synthetic.main.fragment_heart_rate.device_search
-import kotlinx.android.synthetic.main.fragment_heart_rate.receive_heart_rate
-import kotlinx.android.synthetic.main.fragment_heart_rate.tv_heart_rate
+import kotlinx.android.synthetic.main.fragment_monitoring.bpm
+import kotlinx.android.synthetic.main.fragment_monitoring.face
+import kotlinx.android.synthetic.main.fragment_monitoring.start_monitoring
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
@@ -29,17 +28,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class PairBleDeviceFragment : Fragment() {
+class MonitoringFragment : Fragment() {
 
-    @Inject lateinit var bluetoothLeService: BluetoothLeService
-    @Inject lateinit var bleHandler: BleHandler
     @Inject lateinit var connectionApi: BleDeviceConnectionApi
-
-    // todo event buses should be move to viewModel
     @Inject lateinit var eventBus: HeartRateEventBus
+    @Inject lateinit var autoConnectBleDevice: AutoConnectBleDevice
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: ManageBleDeviceViewModel
+    private lateinit var viewModel: MonitoringViewModel
     private lateinit var navController: NavController
     private var heartRateListen: Job? = null
 
@@ -48,44 +44,58 @@ class PairBleDeviceFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? =
-        inflater.inflate(R.layout.fragment_heart_rate, container, false)
+        inflater.inflate(R.layout.fragment_monitoring, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel =
-            ViewModelProvider(this, viewModelFactory).get(ManageBleDeviceViewModel::class.java)
-
         navController = findNavController()
 
-        device_search?.setOnClickListener {
-            navController.navigate(R.id.action_pairBleDeviceFragment_to_searchBleDeviceFragment)
-        }
+        viewModel =
+            ViewModelProvider(this, viewModelFactory).get(MonitoringViewModel::class.java)
 
-        connect_paired_device.setOnClickListener {
-            viewModel.onConnectClicked()
-        }
+        camera.setLifecycleOwner { this.lifecycle }
+        camera.addFrameProcessor(viewModel.getFrameProcessor())
 
-        viewModel.deviceConnection
+        viewModel.message
             .observe(viewLifecycleOwner) {
-                Snackbar.make(view, it.name, Snackbar.LENGTH_SHORT).show()
+                println("EyesResult : $it")
+                face.text = it
             }
 
         connectionApi.deviceConnection
             .observe(viewLifecycleOwner) { connected ->
                 if (connected) bluetooth.setImageDrawable(activity?.getDrawable(R.drawable.ic_bluetooth_connected))
-                else bluetooth.setImageDrawable(activity?.getDrawable(R.drawable.ic_bluetooth_disconnected))
+                else {
+                    bpm.text = "0"
+                    bluetooth.setImageDrawable(activity?.getDrawable(R.drawable.ic_bluetooth_disconnected))
+                }
             }
+
+
+        start_monitoring.setOnClickListener {
+            viewModel.onStartMonitor()
+        }
+
+        bluetooth.setOnClickListener {
+            connectionApi.deviceConnection.value
+                ?.let { connected ->
+                    if (!connected) {
+                        autoConnectBleDevice()
+                        Toast.makeText(activity, "Attempting to connect", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
     }
 
     override fun onResume() {
         super.onResume()
+        listenForHeartRate()
 
-        receive_heart_rate?.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) listenForHeartRate()
-            else heartRateListen?.cancel()
-        }
+        viewModel.startAlarm
+            .observe(viewLifecycleOwner) {
+                navController.navigate(R.id.action_monitoringFragment_to_alarmFragment)
+            }
     }
 
     override fun onPause() {
@@ -98,7 +108,7 @@ class PairBleDeviceFragment : Fragment() {
             eventBus.listen()
                 .openSubscription()
                 .consumeEach {
-                    tv_heart_rate.text = it.toString()
+                    bpm.text = it.toString()
                 }
         }
     }
