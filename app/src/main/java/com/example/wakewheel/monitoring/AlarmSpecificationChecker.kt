@@ -15,24 +15,28 @@ class AlarmSpecificationChecker {
     }
 
     fun checkHeartRateData(data: Double): Boolean =
-        with(heartRateSpecification) {
-            if (data < valueThreshold) {
-                checkHeartRateTimeSpecification()
-            } else {
-                heartRateCounting = false
-                false
-            }
+        if (isBelowThreshold(data)) {
+            heartRateSpecification.checkHeartRateTimeSpecification()
+        } else {
+            heartRateCounting = false
+            false
         }
 
     fun checkEyesData(data: EyesMeasurement): Boolean =
-        with(eyesDataSpecification) {
-            if (data.leftOpenProbability < valueThreshold && data.rightOpenProbability < valueThreshold) {
-                checkEyesDataTimeSpecification()
-            } else {
-                eyesDataCounting = false
-                false
-            }
+        if (isBelowThreshold(data)) {
+            eyesDataSpecification.checkEyesDataTimeSpecification()
+        } else {
+            eyesDataCounting = false
+            false
         }
+
+    fun isBelowThreshold(data: EyesMeasurement): Boolean =
+        with(eyesDataSpecification) {
+            data.leftOpenProbability < valueThreshold && data.rightOpenProbability < valueThreshold
+        }
+
+    fun isBelowThreshold(data: Double): Boolean =
+        data < heartRateSpecification.valueThreshold
 
     private fun HeartRateSpecification.checkHeartRateTimeSpecification(): Boolean =
         System.currentTimeMillis()

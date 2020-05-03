@@ -1,5 +1,6 @@
 package com.example.wakewheel.monitoring
 
+import android.app.AlertDialog
 import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -54,9 +55,26 @@ class AlarmFragment : Fragment(), BackPressListener {
 
         ok.setOnClickListener {
             player?.stop()
-            viewModel.stopMonitor()
-            findNavController().navigateUp()
+            viewModel.onStopMonitor()
+            showDialog()
         }
+    }
+
+    private fun showDialog() {
+        AlertDialog.Builder(activity)
+            .setTitle(R.string.feedback_request)
+            .setMessage(R.string.alarm_question)
+            .setPositiveButton("Yes") { dialog, _ ->
+                dialog.dismiss()
+                findNavController().navigate(R.id.action_alarmFragment_to_monitoringFragment)
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                viewModel.onUnnecessaryAlarmResponse()
+                dialog.dismiss()
+                findNavController().navigate(R.id.action_alarmFragment_to_monitoringFragment)
+            }
+            .create()
+            .show()
     }
 
     override fun onResume() {

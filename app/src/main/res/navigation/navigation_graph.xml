@@ -43,5 +43,12 @@
         android:id="@+id/alarmFragment"
         android:name="com.example.wakewheel.monitoring.AlarmFragment"
         android:label="AlarmFragment"
-        tools:layout="@layout/fragmetn_alarm"/>
+        tools:layout="@layout/fragmetn_alarm">
+        <action
+            android:id="@+id/action_alarmFragment_to_monitoringFragment"
+            app:destination="@id/monitoringFragment"
+            app:popUpTo="@id/monitoringFragment"
+            app:popUpToInclusive="true"
+            />
+    </fragment>
 </navigation>

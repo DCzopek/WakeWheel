@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.wakewheel.R
 import com.example.wakewheel.heartrate.BleDeviceConnectionApi
@@ -40,7 +39,6 @@ class PairBleDeviceFragment : Fragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var viewModel: ManageBleDeviceViewModel
-    private lateinit var navController: NavController
     private var heartRateListen: Job? = null
 
     override fun onCreateView(
@@ -57,10 +55,8 @@ class PairBleDeviceFragment : Fragment() {
         viewModel =
             ViewModelProvider(this, viewModelFactory).get(ManageBleDeviceViewModel::class.java)
 
-        navController = findNavController()
-
         device_search?.setOnClickListener {
-            navController.navigate(R.id.action_pairBleDeviceFragment_to_searchBleDeviceFragment)
+            findNavController().navigate(R.id.action_pairBleDeviceFragment_to_searchBleDeviceFragment)
         }
 
         connect_paired_device.setOnClickListener {
