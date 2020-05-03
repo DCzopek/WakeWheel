@@ -2,6 +2,10 @@ package com.example.wakewheel.monitoring
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.wakewheel.monitoring.AlarmReason.EYES_CLOSURE
+import com.example.wakewheel.monitoring.AlarmReason.HEART_RATE
+import com.example.wakewheel.monitoring.MonitorParameterStatus.DANGER
+import com.example.wakewheel.monitoring.MonitorParameterStatus.OK
 import com.example.wakewheel.receivers.EyesMeasurementEventBus
 import com.example.wakewheel.receivers.HeartRateEventBus
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +23,10 @@ class SleepMonitor(
     private val alarmSpecificationChecker: AlarmSpecificationChecker
 ) {
 
-    private var monitoring = false
+    val monitoring: LiveData<Boolean>
+        get() = _monitoring
+
+    private val _monitoring = MutableLiveData(false)
 
     private var heartRateListen: Job? = null
     private var eyesMeasurementListen: Job? = null
@@ -28,13 +35,23 @@ class SleepMonitor(
     private val rightEyeMeasurements = mutableMapOf<Long, Float>()
     private val heartRateMeasurements = mutableMapOf<Long, Int>()
 
-    val alarm: LiveData<Boolean>
+    val alarm: LiveData<AlarmReason>
         get() = _alarm
 
-    private val _alarm = MutableLiveData(false)
+    private val _alarm = MutableLiveData<AlarmReason>()
+
+    val heartRateStatus: LiveData<MonitorParameterStatus>
+        get() = _heartRateStatus
+
+    private val _heartRateStatus = MutableLiveData(OK)
+
+    val eyesClosureStatus: LiveData<MonitorParameterStatus>
+        get() = _eyesClosureStatus
+
+    private val _eyesClosureStatus = MutableLiveData(OK)
 
     fun startMonitoring() {
-        monitoring = true
+        _monitoring.value = true
         startHeartRateListen()
         startEyesMeasurementListen()
         startCheckingSpecifications()
@@ -42,34 +59,59 @@ class SleepMonitor(
     }
 
     fun stopMonitoring() {
-        monitoring = false
-        _alarm.postValue(false)
+        heartRateMeasurements.clear()
+        leftEyeMeasurements.clear()
+        rightEyeMeasurements.clear()
+        _monitoring.value = false
+        _eyesClosureStatus.postValue(OK)
+        _heartRateStatus.postValue(OK)
         heartRateListen?.cancel()
         eyesMeasurementListen?.cancel()
     }
 
     private fun startCheckingSpecifications() {
         CoroutineScope(Dispatchers.IO).launch {
-            while (monitoring) {
+            while (_monitoring.value!!) {
+                delay(250L)
                 when {
-                    heartRateIsSatisfied() -> println("Start alarm caused by heartRate")
-                    eyesDataIsSatisfied() -> println("Start alarm caused by eyes measurement")
+                    heartRateIsSatisfied() -> _alarm.postValue(HEART_RATE)
+                    eyesDataIsSatisfied() -> _alarm.postValue(EYES_CLOSURE)
                 }
-                delay(500L)
+                delay(250L)
+                _heartRateStatus.postValue(getHeartRateStatus())
+                _eyesClosureStatus.postValue(getEyesDataStatus())
             }
         }
     }
 
+    private fun getHeartRateStatus(): MonitorParameterStatus =
+        when {
+            heartRateMeasurements.isEmpty() -> OK
+            alarmSpecificationChecker.isBelowThreshold(currentHeartRate()) -> DANGER
+            else -> OK
+        }
+
+    private fun getEyesDataStatus(): MonitorParameterStatus =
+        when {
+            leftEyeMeasurements.isEmpty() || rightEyeMeasurements.isEmpty() -> OK
+            alarmSpecificationChecker.isBelowThreshold(currentEyesMeasurement()) -> DANGER
+            else -> OK
+        }
+
     private fun eyesDataIsSatisfied(): Boolean =
-        alarmSpecificationChecker.checkEyesData(
-            EyesMeasurement(
-                leftOpenProbability = leftEyeMeasurements.values.average().toFloat(),
-                rightOpenProbability = rightEyeMeasurements.values.average().toFloat()
-            )
-        )
+        alarmSpecificationChecker.checkEyesData(currentEyesMeasurement())
 
     private fun heartRateIsSatisfied() =
-        alarmSpecificationChecker.checkHeartRateData(heartRateMeasurements.values.average())
+        alarmSpecificationChecker.checkHeartRateData(currentHeartRate())
+
+    private fun currentHeartRate() =
+        heartRateMeasurements.values.average()
+
+    private fun currentEyesMeasurement(): EyesMeasurement =
+        EyesMeasurement(
+            leftOpenProbability = leftEyeMeasurements.values.average().toFloat(),
+            rightOpenProbability = rightEyeMeasurements.values.average().toFloat()
+        )
 
     private fun startHeartRateListen() {
         heartRateListen = CoroutineScope(Dispatchers.IO).launch {

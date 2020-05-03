@@ -9,6 +9,7 @@ import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import javax.inject.Singleton
 import kotlin.reflect.KClass
 
 @Target(

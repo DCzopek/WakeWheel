@@ -22,4 +22,12 @@
     <string name="location_permissions_rationale">This permissions is necessary to search Bluetooth devices, if you deny it permanently you will not be able to use the app fully functional !</string>
     <string name="permission_denied_message">You permanently denied needed permissions. To perform this action please go to this app settings and enable needed permissions.</string>
     <string name="bpm">bpm</string>
+    <string name="start_monitoring">Start monitoring</string>
+    <string name="stop_monitoring">Stop monitoring</string>
+    <string name="feedback_request">Please give feedback</string>
+    <string name="alarm_question">Was this alarm triggered at the right time?</string>
+    <string name="dismiss">dismiss</string>
+    <string name="alarm">ALARM!</string>
+    <string name="sleep_monitoring">Sleep monitoring</string>
+    <string name="manage_heart_rate_devices">Manage heart rate devices</string>
 </resources>

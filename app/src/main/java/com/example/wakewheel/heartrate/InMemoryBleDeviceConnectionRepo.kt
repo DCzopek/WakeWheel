@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 class InMemoryBleDeviceConnectionRepo : BleDeviceConnectionApi {
 
     private var connected = MutableLiveData(false)
+    private var autoConnected = false
 
     override val deviceConnection: LiveData<Boolean>
         get() = connected
@@ -13,4 +14,11 @@ class InMemoryBleDeviceConnectionRepo : BleDeviceConnectionApi {
     override fun setConnected(connected: Boolean) {
         this.connected.postValue(connected)
     }
+
+    override fun setAutoConnected(connected: Boolean) {
+        autoConnected = connected
+    }
+
+    override fun autoConnected(): Boolean =
+        autoConnected
 }

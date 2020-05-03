@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,7 +37,6 @@ class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var devicesRecyclerAdapter: DevicesRecyclerAdapter
     private lateinit var viewModel: ManageBleDeviceViewModel
-    private lateinit var navController: NavController
 
     private var firstScan = true
 
@@ -55,7 +53,6 @@ class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
 
         viewModel =
             ViewModelProvider(this, viewModelFactory).get(ManageBleDeviceViewModel::class.java)
-        navController = findNavController()
         devicesRecyclerAdapter = DevicesRecyclerAdapter(this)
 
         recyclerView.adapter = devicesRecyclerAdapter
@@ -169,7 +166,7 @@ class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
             }
             .setNegativeButton("DO NOT GRANT") { dialog, _ ->
                 dialog.dismiss()
-                navController.navigateUp()
+                findNavController().navigateUp()
             }
             .create()
             .show()
@@ -180,7 +177,7 @@ class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
             .setMessage(R.string.permission_denied_message)
             .setNeutralButton("OK") { dialog, _ ->
                 dialog.dismiss()
-                navController.navigateUp()
+                findNavController().navigateUp()
             }
             .create()
             .show()

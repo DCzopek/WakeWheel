@@ -6,7 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.wakewheel.Const
 import com.example.wakewheel.extensions.visionImageRotation
+import com.example.wakewheel.heartrate.AutoConnectBleDevice
+import com.example.wakewheel.monitoring.AlarmReason.EYES_CLOSURE
+import com.example.wakewheel.monitoring.AlarmReason.HEART_RATE
 import com.example.wakewheel.receivers.EyesMeasurementEventBus
+import com.example.wakewheel.receivers.HeartRateEventBus
 import com.example.wakewheel.utils.SingleLiveEvent
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
@@ -15,44 +19,120 @@ import com.google.firebase.ml.vision.face.FirebaseVisionFace
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
 import com.otaliastudios.cameraview.Frame
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class MonitoringViewModel @Inject constructor(
     private val sleepMonitor: SleepMonitor,
-    private val eyesMeasurementEventBus: EyesMeasurementEventBus
+    private val eyesMeasurementEventBus: EyesMeasurementEventBus,
+    private val heartRateEventBus: HeartRateEventBus,
+    private val autoConnectBleDevice: AutoConnectBleDevice,
+    private val specificationsRepo: SpecificationsRepo,
+    private val alarmReasonRepo: AlarmReasonRepo
 ) : ViewModel() {
 
+    val monitoring: LiveData<Boolean>
+        get() = sleepMonitor.monitoring
+
+    val startAlarm = SingleLiveEvent<AlarmReason>()
+
+    val heartRate: LiveData<Int>
+        get() = _heartRate
+
+    val heartRateStatus: LiveData<MonitorParameterStatus>
+        get() = sleepMonitor.heartRateStatus
+
+    val eyesClosureStatus: LiveData<MonitorParameterStatus>
+        get() = sleepMonitor.eyesClosureStatus
+
+    private val _heartRate = MutableLiveData<Int>()
     private var detectionInProgress = false
-    private val alarmObserver = { alarm: Boolean ->
-        if (alarm) {
-            startAlarm.postValue(Any())
+    private var heartRateListen: Job? = null
+
+    private val alarmObserver = { reason: AlarmReason ->
+        if (monitoring.value!!) {
+            alarmReasonRepo.insertLastAlarmReason(reason)
+            startAlarm.value = reason
+            onStopMonitor()
         }
     }
 
-    val message: LiveData<String>
-        get() = _message
-
-    private val _message = MutableLiveData<String>()
-
-    val startAlarm = SingleLiveEvent<Any>()
-
     init {
+        listenForHeartRate()
         sleepMonitor.alarm
             .observeForever(alarmObserver)
     }
 
     override fun onCleared() {
-        sleepMonitor.alarm
-            .removeObserver(alarmObserver)
+        sleepMonitor.alarm.removeObserver(alarmObserver)
+        heartRateListen?.cancel()
         super.onCleared()
+    }
+
+    fun onUnnecessaryAlarmResponse() {
+        when (alarmReasonRepo.fetchLastAlarmReason()) {
+            EYES_CLOSURE -> updateEyesClosureSpecification()
+            HEART_RATE -> updateHeartRateSpecification()
+            null -> {
+            }
+        }
+    }
+
+    private fun updateEyesClosureSpecification() {
+        specificationsRepo.fetchEyesDataSpecification()
+            ?.also { spec ->
+                var newSpec: EyesDataSpecification? = null
+
+                if (spec.timeThreshold < Const.EYES_CLOSURE_MAX_TIME_THRESHOLD) {
+                    newSpec = spec.copy(timeThreshold = spec.timeThreshold + 500L)
+                }
+
+                if (spec.valueThreshold > Const.EYES_CLOSURE_MIN_VALUE_THRESHOLD) {
+                    newSpec
+                        ?.also {
+                            newSpec = it.copy(valueThreshold = spec.valueThreshold - 0.02f)
+                        }
+                        ?: run {
+                            newSpec = spec.copy(valueThreshold = spec.valueThreshold - 0.02f)
+                        }
+                }
+
+                newSpec?.let { specificationsRepo.insertOrUpdate(it) }
+            } ?: specificationsRepo.insertOrUpdate(EyesDataSpecification())
+    }
+
+    private fun updateHeartRateSpecification() {
+        specificationsRepo.fetchHeartRateSpecification()
+            ?.also { spec ->
+                var newSpec: HeartRateSpecification? = null
+
+                if (spec.timeThreshold < Const.HEAR_RATE_MAX_TIME_THRESHOLD) {
+                    newSpec = spec.copy(timeThreshold = spec.timeThreshold + 500L)
+                }
+
+                if (spec.valueThreshold > Const.HEAR_RATE_MIN_VALUE_THRESHOLD) {
+                    newSpec
+                        ?.also {
+                            newSpec = it.copy(valueThreshold = spec.valueThreshold - 1)
+                        }
+                        ?: run {
+                            newSpec = spec.copy(valueThreshold = spec.valueThreshold - 1)
+                        }
+                }
+
+                newSpec?.let { specificationsRepo.insertOrUpdate(it) }
+            } ?: specificationsRepo.insertOrUpdate(HeartRateSpecification())
     }
 
     fun onStartMonitor() {
         sleepMonitor.startMonitoring()
     }
 
-    fun stopMonitor() {
+    fun onStopMonitor() {
         sleepMonitor.stopMonitoring()
     }
 
@@ -84,18 +164,10 @@ class MonitoringViewModel @Inject constructor(
                                         rightOpenProbability = rightEyeProb
                                     )
                                 )
-
                                 Log.d(
                                     Const.FACE_RECOGNITION_TAG,
                                     "Eyes prob: left -> $leftEyeProb   right -> $rightEyeProb"
                                 )
-                                if (leftEyeProb > 0.8 && rightEyeProb > 0.8) {
-                                    _message.postValue("Your eyes are open")
-                                } else if (leftEyeProb < 0.2 && rightEyeProb < 0.2) {
-                                    _message.postValue("Your eyes are closed")
-                                } else {
-                                    _message.postValue("You have at least one eye closed")
-                                }
                             }
                         }
                         detectionInProgress = false
@@ -105,6 +177,20 @@ class MonitoringViewModel @Inject constructor(
                     }
             }
         }
+
+    fun reconnectDevice() {
+        autoConnectBleDevice()
+    }
+
+    private fun listenForHeartRate() {
+        heartRateListen = MainScope().launch {
+            heartRateEventBus.listen()
+                .openSubscription()
+                .consumeEach {
+                    _heartRate.postValue(it)
+                }
+        }
+    }
 
     private fun getRealTimeOpts(): FirebaseVisionFaceDetectorOptions =
         FirebaseVisionFaceDetectorOptions.Builder()
