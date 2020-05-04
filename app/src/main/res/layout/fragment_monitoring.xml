@@ -95,7 +95,8 @@
         app:layout_constraintBottom_toBottomOf="@id/bpm"
         app:layout_constraintEnd_toStartOf="@id/center_guideline"
         app:layout_constraintStart_toStartOf="@id/camera_container"
-        app:layout_constraintTop_toTopOf="@id/bpm" />
+        app:layout_constraintTop_toTopOf="@id/bpm"
+        tools:ignore="ContentDescription" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/center_guideline"

@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">WakeWheel</string>
+
+    <string name="device_status_during">Rozpoczęto parowanie urządzenia</string>
+    <string name="device_status_success">Urządzenie sparowane</string>
+    <string name="device_status_fail">Nie udało się sparować urządzenia</string>
+    <string name="device_status_timeout">Nie udało się sparować urządzenia. Przekroczono czas połączenia.</string>
+    <string name="device_status_no_heart_rate">Nie udało się nawiązać połączenia. Wartość pulsu nie została wysłana.</string>
+    <string name="location_permissions_rationale">To uprawnienie jest niezbędne do wyszukiwania urządzeń Bluetooth, jeżeli permanentnie odmówisz jego przydzielenia, nie będziesz mógł w pełni korzystać z funkcjonalności aplikacji.</string>
+    <string name="permission_denied_message">"Permanentnie odmówiłeś przydzielenia wymaganych uprawnień. Aby skorzystać z tej funkcji przejdź do ustawień i przydziel uprawnienia manualnie. "</string>
+    <string name="start_monitoring">Rozpocznij monitorowanie</string>
+    <string name="stop_monitoring">Przerwij monitorowanie</string>
+    <string name="feedback_request">Przekaż informację zwrotną</string>
+    <string name="alarm_question">Czy alarm został uruchomiony w odpowiednim momencie?</string>
+    <string name="dismiss">odwołaj</string>
+    <string name="sleep_monitoring">Monitorowanie zasypiania</string>
+    <string name="bluetooth_device_manager">Manadżer urządzeń bluetooth</string>
+    <string name="alarm_message">Prawdopodobnie zasnąłeś ! Pobudka !</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="grant">Przydziel</string>
+    <string name="deny">Odmów</string>
+    <string name="devices_list">Lista urządzeń</string>
+    <string name="device">Urządzenie</string>
+    <string name="address_with_colon">adres:</string>
+    <string name="pair">sparuj</string>
+    <string name="search_device">Szukaj urządzenia</string>
+    <string name="connect_your_device">Połącz z twoim urządzeniem</string>
+
+</resources>
