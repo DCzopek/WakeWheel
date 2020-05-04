@@ -11,7 +11,6 @@ import com.example.wakewheel.monitoring.AlarmReason.EYES_CLOSURE
 import com.example.wakewheel.monitoring.AlarmReason.HEART_RATE
 import com.example.wakewheel.receivers.EyesMeasurementEventBus
 import com.example.wakewheel.receivers.HeartRateEventBus
-import com.example.wakewheel.utils.SingleLiveEvent
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
@@ -24,8 +23,10 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
 @ExperimentalCoroutinesApi
+@Singleton
 class MonitoringViewModel @Inject constructor(
     private val sleepMonitor: SleepMonitor,
     private val eyesMeasurementEventBus: EyesMeasurementEventBus,
@@ -38,7 +39,10 @@ class MonitoringViewModel @Inject constructor(
     val monitoring: LiveData<Boolean>
         get() = sleepMonitor.monitoring
 
-    val startAlarm = SingleLiveEvent<AlarmReason>()
+    val alarm: LiveData<Boolean>
+        get() = _alarm
+
+    private val _alarm = MutableLiveData(false)
 
     val heartRate: LiveData<Int>
         get() = _heartRate
@@ -56,7 +60,7 @@ class MonitoringViewModel @Inject constructor(
     private val alarmObserver = { reason: AlarmReason ->
         if (monitoring.value!!) {
             alarmReasonRepo.insertLastAlarmReason(reason)
-            startAlarm.value = reason
+            _alarm.postValue(true)
             onStopMonitor()
         }
     }
@@ -134,6 +138,10 @@ class MonitoringViewModel @Inject constructor(
 
     fun onStopMonitor() {
         sleepMonitor.stopMonitoring()
+    }
+
+    fun clearAlarm() {
+        _alarm.postValue(false)
     }
 
     fun getFrameProcessor(): (frame: Frame) -> Unit =

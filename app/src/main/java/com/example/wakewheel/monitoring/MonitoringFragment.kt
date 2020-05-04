@@ -1,5 +1,11 @@
 package com.example.wakewheel.monitoring
 
+import android.app.AlertDialog
+import android.content.Context
+import android.media.AudioManager
+import android.media.MediaPlayer
+import android.media.Ringtone
+import android.media.RingtoneManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +37,11 @@ class MonitoringFragment : Fragment() {
     private lateinit var viewModel: MonitoringViewModel
     private lateinit var navController: NavController
 
+    private lateinit var alarm: Ringtone
+    private var audioManager: AudioManager? = null
+
+    private var player: MediaPlayer? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,6 +58,13 @@ class MonitoringFragment : Fragment() {
 
         camera.setLifecycleOwner { this.lifecycle }
         camera.addFrameProcessor(viewModel.getFrameProcessor())
+
+        alarm = RingtoneManager.getRingtone(
+            activity,
+            RingtoneManager.getActualDefaultRingtoneUri(activity, RingtoneManager.TYPE_ALARM)
+        )
+
+        audioManager = activity?.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         connectionApi.deviceConnection
             .observe(viewLifecycleOwner) { connected ->
@@ -103,9 +121,73 @@ class MonitoringFragment : Fragment() {
             }
 
         navController = findNavController()
-        viewModel.startAlarm
-            .observe(viewLifecycleOwner) {
-                navController.navigate(R.id.action_monitoringFragment_to_alarmFragment)
+
+        viewModel.alarm
+            .observe(viewLifecycleOwner) { alarm ->
+                if (alarm) {
+                    playAlarmSound()
+                    showAlarmDialog()
+                }
             }
+    }
+
+    override fun onDestroyView() {
+        viewModel.clearAlarm()
+        viewModel.alarm.removeObservers(viewLifecycleOwner)
+        super.onDestroyView()
+    }
+
+    private fun showAlarmDialog() {
+        AlertDialog.Builder(activity)
+            .setTitle("ALARM")
+            .setMessage("You probably fall asleep! Wake up!")
+            .setNeutralButton("Dismiss") { dialog, _ ->
+                player?.stop()
+                viewModel.clearAlarm()
+                dialog.dismiss()
+                showFeedbackDialog()
+            }
+            .create()
+            .show()
+    }
+
+    private fun playAlarmSound() {
+        player = MediaPlayer.create(
+            activity,
+            RingtoneManager.getActualDefaultRingtoneUri(activity, RingtoneManager.TYPE_ALARM)
+        )
+
+        audioManager?.getStreamMaxVolume(AudioManager.STREAM_ALARM)
+            ?.let { max ->
+                audioManager?.setStreamVolume(
+                    AudioManager.STREAM_MUSIC,
+                    max,
+                    AudioManager.FLAG_PLAY_SOUND
+                )
+            }
+
+        player?.setVolume(1f, 1f)
+        player?.isLooping = true
+        player?.start()
+    }
+
+    private fun showFeedbackDialog() {
+        AlertDialog.Builder(activity)
+            .setTitle(R.string.feedback_request)
+            .setMessage(R.string.alarm_question)
+            .setPositiveButton("Yes") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                viewModel.onUnnecessaryAlarmResponse()
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        player?.stop()
     }
 }
