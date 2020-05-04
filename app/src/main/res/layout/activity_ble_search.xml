@@ -12,7 +12,7 @@
         android:layout_height="0dp"
         android:background="@color/colorPrimary"
         android:gravity="center"
-        android:text="BLE devices list"
+        android:text="@string/devices_list"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="22sp"

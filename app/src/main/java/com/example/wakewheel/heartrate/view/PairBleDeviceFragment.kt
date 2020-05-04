@@ -34,7 +34,6 @@ class PairBleDeviceFragment : Fragment() {
     @Inject lateinit var bleHandler: BleHandler
     @Inject lateinit var connectionApi: BleDeviceConnectionApi
 
-    // todo event buses should be move to viewModel
     @Inject lateinit var eventBus: HeartRateEventBus
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 

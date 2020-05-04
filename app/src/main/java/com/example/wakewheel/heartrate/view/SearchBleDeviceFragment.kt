@@ -160,11 +160,11 @@ class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
     private fun showRationaleDialog() {
         AlertDialog.Builder(activity)
             .setMessage(R.string.location_permissions_rationale)
-            .setPositiveButton("GRANT") { dialog, _ ->
+            .setPositiveButton(R.string.grant) { dialog, _ ->
                 dialog.dismiss()
                 requestPermissions()
             }
-            .setNegativeButton("DO NOT GRANT") { dialog, _ ->
+            .setNegativeButton(R.string.deny) { dialog, _ ->
                 dialog.dismiss()
                 findNavController().navigateUp()
             }
@@ -175,7 +175,7 @@ class SearchBleDeviceFragment : Fragment(), DeviceRecyclerClickListener {
     private fun showDeniedPermissionDialog() {
         AlertDialog.Builder(activity)
             .setMessage(R.string.permission_denied_message)
-            .setNeutralButton("OK") { dialog, _ ->
+            .setNeutralButton(R.string.ok) { dialog, _ ->
                 dialog.dismiss()
                 findNavController().navigateUp()
             }

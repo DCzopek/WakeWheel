@@ -19,9 +19,9 @@ import com.example.wakewheel.R
 import com.example.wakewheel.heartrate.BleDeviceConnectionApi
 import com.example.wakewheel.monitoring.MonitorParameterStatus.DANGER
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.activity_face_recognition.camera
 import kotlinx.android.synthetic.main.fragment_heart_rate.bluetooth
 import kotlinx.android.synthetic.main.fragment_monitoring.bpm
+import kotlinx.android.synthetic.main.fragment_monitoring.camera
 import kotlinx.android.synthetic.main.fragment_monitoring.camera_container
 import kotlinx.android.synthetic.main.fragment_monitoring.start_monitoring
 import kotlinx.android.synthetic.main.fragment_monitoring.stop_monitoring
@@ -139,9 +139,9 @@ class MonitoringFragment : Fragment() {
 
     private fun showAlarmDialog() {
         AlertDialog.Builder(activity)
-            .setTitle("ALARM")
-            .setMessage("You probably fall asleep! Wake up!")
-            .setNeutralButton("Dismiss") { dialog, _ ->
+            .setTitle(R.string.alarm)
+            .setMessage(getString(R.string.alarm_message))
+            .setNeutralButton(R.string.dismiss) { dialog, _ ->
                 player?.stop()
                 viewModel.clearAlarm()
                 dialog.dismiss()
@@ -175,10 +175,10 @@ class MonitoringFragment : Fragment() {
         AlertDialog.Builder(activity)
             .setTitle(R.string.feedback_request)
             .setMessage(R.string.alarm_question)
-            .setPositiveButton("Yes") { dialog, _ ->
+            .setPositiveButton(R.string.yes) { dialog, _ ->
                 dialog.dismiss()
             }
-            .setNegativeButton("No") { dialog, _ ->
+            .setNegativeButton(R.string.no) { dialog, _ ->
                 viewModel.onUnnecessaryAlarmResponse()
                 dialog.dismiss()
             }

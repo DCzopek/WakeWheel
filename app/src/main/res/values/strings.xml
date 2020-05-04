@@ -1,18 +1,5 @@
 <resources>
     <string name="app_name">WakeWheel</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
-
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
-    <string name="menu_tools">Tools</string>
-    <string name="menu_share">Share</string>
-    <string name="menu_send">Send</string>
 
     <string name="device_status_during">Start pairing your device</string>
     <string name="device_status_success">Device successfully paired</string>
@@ -21,13 +8,24 @@
     <string name="device_status_no_heart_rate">Cannot establish connection. No heart rate received.</string>
     <string name="location_permissions_rationale">This permissions is necessary to search Bluetooth devices, if you deny it permanently you will not be able to use the app fully functional !</string>
     <string name="permission_denied_message">You permanently denied needed permissions. To perform this action please go to this app settings and enable needed permissions.</string>
-    <string name="bpm">bpm</string>
+    <string name="bpm" translatable="false">bpm</string>
     <string name="start_monitoring">Start monitoring</string>
     <string name="stop_monitoring">Stop monitoring</string>
     <string name="feedback_request">Please give feedback</string>
     <string name="alarm_question">Was this alarm triggered at the right time?</string>
     <string name="dismiss">dismiss</string>
-    <string name="alarm">ALARM!</string>
+    <string name="alarm" translatable="false">ALARM !</string>
     <string name="sleep_monitoring">Sleep monitoring</string>
-    <string name="manage_heart_rate_devices">Manage heart rate devices</string>
+    <string name="bluetooth_device_manager">Bluetooth device manager</string>
+    <string name="alarm_message">You probably fall asleep! Wake up!</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="grant">grant</string>
+    <string name="deny">deny</string>
+    <string name="devices_list">Devices list</string>
+    <string name="device">Device</string>
+    <string name="address_with_colon">address:</string>
+    <string name="pair">Pair</string>
+    <string name="search_device">Search device</string>
+    <string name="connect_your_device">Connect your device</string>
 </resources>
