@@ -7,6 +7,8 @@ import android.content.BroadcastReceiver
 import androidx.fragment.app.Fragment
 import com.example.wakewheel.di.AppModule
 import com.example.wakewheel.di.DaggerAppComponent
+import com.example.wakewheel.heartrate.AutoConnectBleDevice
+import com.example.wakewheel.receivers.gatt.BluetoothGattReceiver
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
@@ -17,6 +19,7 @@ import io.realm.Realm
 import io.realm.RealmConfiguration
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
+import javax.inject.Provider
 
 @ExperimentalCoroutinesApi
 class App : Application(),
@@ -33,6 +36,8 @@ class App : Application(),
 
     @Inject lateinit var supportFragmentInjector: DispatchingAndroidInjector<Fragment>
 
+    @Inject lateinit var autoConnectBleDeviceProvider: Provider<AutoConnectBleDevice>
+
     override fun onCreate() {
         super.onCreate()
 
@@ -43,6 +48,9 @@ class App : Application(),
 
         Realm.init(this)
         Realm.setDefaultConfiguration(getDefaultDbConfig())
+
+        registerReceiver(BluetoothGattReceiver(), BluetoothGattReceiver.intentFilter)
+        autoConnectBleDeviceProvider.get().invoke()
     }
 
     override fun broadcastReceiverInjector(): AndroidInjector<BroadcastReceiver> =

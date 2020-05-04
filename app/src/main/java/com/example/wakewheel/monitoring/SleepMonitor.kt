@@ -72,37 +72,39 @@ class SleepMonitor(
     private fun startCheckingSpecifications() {
         CoroutineScope(Dispatchers.IO).launch {
             while (_monitoring.value!!) {
+                var hrData = currentHeartRate()
+                var eyesData = currentEyesMeasurement()
                 delay(250L)
                 when {
-                    heartRateIsSatisfied() -> _alarm.postValue(HEART_RATE)
-                    eyesDataIsSatisfied() -> _alarm.postValue(EYES_CLOSURE)
+                    heartRateIsSatisfied(hrData) -> _alarm.postValue(HEART_RATE)
+                    eyesDataIsSatisfied(eyesData) -> _alarm.postValue(EYES_CLOSURE)
                 }
                 delay(250L)
-                _heartRateStatus.postValue(getHeartRateStatus())
-                _eyesClosureStatus.postValue(getEyesDataStatus())
+                _heartRateStatus.postValue(getHeartRateStatus(hrData))
+                _eyesClosureStatus.postValue(getEyesDataStatus(eyesData))
             }
         }
     }
 
-    private fun getHeartRateStatus(): MonitorParameterStatus =
+    private fun getHeartRateStatus(data: Double): MonitorParameterStatus =
         when {
             heartRateMeasurements.isEmpty() -> OK
-            alarmSpecificationChecker.isBelowThreshold(currentHeartRate()) -> DANGER
+            alarmSpecificationChecker.isBelowThreshold(data) -> DANGER
             else -> OK
         }
 
-    private fun getEyesDataStatus(): MonitorParameterStatus =
+    private fun getEyesDataStatus(data: EyesMeasurement): MonitorParameterStatus =
         when {
             leftEyeMeasurements.isEmpty() || rightEyeMeasurements.isEmpty() -> OK
-            alarmSpecificationChecker.isBelowThreshold(currentEyesMeasurement()) -> DANGER
+            alarmSpecificationChecker.isBelowThreshold(data) -> DANGER
             else -> OK
         }
 
-    private fun eyesDataIsSatisfied(): Boolean =
-        alarmSpecificationChecker.checkEyesData(currentEyesMeasurement())
+    private fun eyesDataIsSatisfied(data: EyesMeasurement): Boolean =
+        alarmSpecificationChecker.checkEyesData(data)
 
-    private fun heartRateIsSatisfied() =
-        alarmSpecificationChecker.checkHeartRateData(currentHeartRate())
+    private fun heartRateIsSatisfied(data: Double) =
+        alarmSpecificationChecker.checkHeartRateData(data)
 
     private fun currentHeartRate() =
         heartRateMeasurements.values.average()

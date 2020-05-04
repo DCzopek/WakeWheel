@@ -5,6 +5,4 @@ import androidx.lifecycle.LiveData
 interface BleDeviceConnectionApi {
     fun setConnected(connected: Boolean)
     val deviceConnection: LiveData<Boolean>
-    fun autoConnected(): Boolean
-    fun setAutoConnected(connected: Boolean)
 }
