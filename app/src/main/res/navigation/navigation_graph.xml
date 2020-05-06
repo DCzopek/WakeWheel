@@ -18,9 +18,9 @@
     </fragment>
     <fragment
         android:id="@+id/pairBleDeviceFragment"
-        android:name="com.example.wakewheel.heartrate.view.PairBleDeviceFragment"
+        android:name="com.example.wakewheel.heartrate.view.ManageBleDeviceFragment"
         android:label="PairBleDeviceFragment"
-        tools:layout="@layout/fragment_heart_rate">
+        tools:layout="@layout/fragment_device_management">
         <action
             android:id="@+id/action_pairBleDeviceFragment_to_searchBleDeviceFragment"
             app:destination="@id/searchBleDeviceFragment" />

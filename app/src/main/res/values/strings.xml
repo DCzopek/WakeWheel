@@ -24,8 +24,13 @@
     <string name="deny">deny</string>
     <string name="devices_list">Devices list</string>
     <string name="device">Device</string>
-    <string name="address_with_colon">address:</string>
+    <string name="address_with_colon">Address:</string>
     <string name="pair">Pair</string>
     <string name="search_device">Search device</string>
     <string name="connect_your_device">Connect your device</string>
+    <string name="heart_rate_with_colon">Heart Rate:</string>
+    <string name="device_with_colon">Device:</string>
+    <string name="your_device">your device</string>
+    <string name="no_value">no value</string>
+    <string name="no_paired_device">no paired device</string>
 </resources>

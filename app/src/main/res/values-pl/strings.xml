@@ -22,9 +22,14 @@
     <string name="deny">Odmów</string>
     <string name="devices_list">Lista urządzeń</string>
     <string name="device">Urządzenie</string>
-    <string name="address_with_colon">adres:</string>
+    <string name="address_with_colon">Adres:</string>
     <string name="pair">sparuj</string>
     <string name="search_device">Szukaj urządzenia</string>
     <string name="connect_your_device">Połącz z twoim urządzeniem</string>
+    <string name="heart_rate_with_colon">Puls:</string>
+    <string name="device_with_colon">"Urządzenie: "</string>
+    <string name="your_device">twoje urządzenie</string>
+    <string name="no_value">brak</string>
+    <string name="no_paired_device">brak sparowanego urządzenia</string>
 
 </resources>
