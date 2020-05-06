@@ -131,7 +131,7 @@ class MonitoringFragment : Fragment() {
         viewModel.alarm
             .observe(viewLifecycleOwner) { alarm ->
                 if (alarm) {
-                    playAlarmSound()
+                    //playAlarmSound()
                     showAlarmDialog()
                 }
             }
@@ -167,11 +167,12 @@ class MonitoringFragment : Fragment() {
         AlertDialog.Builder(activity)
             .setTitle(R.string.alarm)
             .setMessage(getString(R.string.alarm_message))
-            .setNeutralButton(R.string.dismiss) { dialog, _ ->
+            .setNeutralButton(R.string.dismiss) { dialog, _ -> dialog.dismiss() }
+            .setOnDismissListener {
+                showFeedbackDialog()
                 player?.stop()
                 viewModel.clearAlarm()
-                dialog.dismiss()
-                showFeedbackDialog()
+                viewModel.onStartMonitor()
             }
             .create()
             .show()
