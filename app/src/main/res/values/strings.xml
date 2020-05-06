@@ -33,4 +33,5 @@
     <string name="your_device">your device</string>
     <string name="no_value">no value</string>
     <string name="no_paired_device">no paired device</string>
+    <string name="eyes_receive_gap_warning">Cannot recognize eyes closure. Please set camera in front on your face or try white background to light it.</string>
 </resources>

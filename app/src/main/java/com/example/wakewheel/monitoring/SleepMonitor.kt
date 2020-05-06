@@ -6,6 +6,7 @@ import com.example.wakewheel.monitoring.AlarmReason.EYES_CLOSURE
 import com.example.wakewheel.monitoring.AlarmReason.HEART_RATE
 import com.example.wakewheel.monitoring.MonitorParameterStatus.DANGER
 import com.example.wakewheel.monitoring.MonitorParameterStatus.OK
+import com.example.wakewheel.monitoring.MonitorParameterStatus.WARNING_NO_DATA_RECEIVED
 import com.example.wakewheel.receivers.EyesMeasurementEventBus
 import com.example.wakewheel.receivers.HeartRateEventBus
 import kotlinx.coroutines.CoroutineScope
@@ -50,6 +51,8 @@ class SleepMonitor(
 
     private val _eyesClosureStatus = MutableLiveData(OK)
 
+    private var lastEyesDataReceiveTimestamp = 0L
+
     fun startMonitoring() {
         _monitoring.value = true
         startHeartRateListen()
@@ -72,8 +75,8 @@ class SleepMonitor(
     private fun startCheckingSpecifications() {
         CoroutineScope(Dispatchers.IO).launch {
             while (_monitoring.value!!) {
-                var hrData = currentHeartRate()
-                var eyesData = currentEyesMeasurement()
+                val hrData = currentHeartRate()
+                val eyesData = currentEyesMeasurement()
                 delay(250L)
                 when {
                     heartRateIsSatisfied(hrData) -> _alarm.postValue(HEART_RATE)
@@ -97,6 +100,7 @@ class SleepMonitor(
         when {
             leftEyeMeasurements.isEmpty() || rightEyeMeasurements.isEmpty() -> OK
             alarmSpecificationChecker.isBelowThreshold(data) -> DANGER
+            isDataReceiveGap() -> WARNING_NO_DATA_RECEIVED
             else -> OK
         }
 
@@ -108,6 +112,9 @@ class SleepMonitor(
 
     private fun currentHeartRate() =
         heartRateMeasurements.values.average()
+
+    private fun isDataReceiveGap(): Boolean =
+        lastEyesDataReceiveTimestamp != 0L && timestamp() - lastEyesDataReceiveTimestamp > EYES_DATA_RECEIVE_THRESHOLD
 
     private fun currentEyesMeasurement(): EyesMeasurement =
         EyesMeasurement(
@@ -131,10 +138,13 @@ class SleepMonitor(
             eyesMeasurementEventBus.listen()
                 .openSubscription()
                 .consumeEach {
-                    leftEyeMeasurements
-                        .bufferedPut(timestamp(), it.leftOpenProbability, DEFAULT_BUFFER_SIZE)
-                    rightEyeMeasurements
-                        .bufferedPut(timestamp(), it.rightOpenProbability, DEFAULT_BUFFER_SIZE)
+                    timestamp().let { timestamp ->
+                        lastEyesDataReceiveTimestamp = timestamp
+                        leftEyeMeasurements
+                            .bufferedPut(timestamp, it.leftOpenProbability, DEFAULT_BUFFER_SIZE)
+                        rightEyeMeasurements
+                            .bufferedPut(timestamp, it.rightOpenProbability, DEFAULT_BUFFER_SIZE)
+                    }
                 }
         }
     }
@@ -158,5 +168,6 @@ class SleepMonitor(
 
     companion object {
         private const val DEFAULT_BUFFER_SIZE = 5
+        private const val EYES_DATA_RECEIVE_THRESHOLD = 5_000L
     }
 }

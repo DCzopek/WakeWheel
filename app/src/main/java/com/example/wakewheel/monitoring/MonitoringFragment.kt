@@ -18,7 +18,10 @@ import androidx.navigation.fragment.findNavController
 import com.example.wakewheel.R
 import com.example.wakewheel.heartrate.BleDeviceConnectionApi
 import com.example.wakewheel.monitoring.MonitorParameterStatus.DANGER
+import com.example.wakewheel.monitoring.MonitorParameterStatus.OK
+import com.example.wakewheel.monitoring.MonitorParameterStatus.WARNING_NO_DATA_RECEIVED
 import com.example.wakewheel.receivers.HeartRateEventBus
+import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_device_management.bluetooth
 import kotlinx.android.synthetic.main.fragment_monitoring.bpm
@@ -53,6 +56,7 @@ class MonitoringFragment : Fragment() {
     private var heartRateListen: Job? = null
 
     private var deviceConnected = false
+    private var lastEyesClosureStatus = OK
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -122,8 +126,15 @@ class MonitoringFragment : Fragment() {
 
         viewModel.eyesClosureStatus
             .observe(viewLifecycleOwner) {
-                if (it == DANGER) camera_container.setBackgroundResource(R.drawable.alarm_background_nok)
-                else camera_container.setBackgroundResource(R.drawable.alarm_background_ok)
+                when (it) {
+                    DANGER -> camera_container.setBackgroundResource(R.drawable.alarm_background_nok)
+                    WARNING_NO_DATA_RECEIVED -> {
+                        showWarningSnackbar(view)
+                        camera_container.setBackgroundResource(R.drawable.alarm_background_warning)
+                    }
+                    else -> camera_container.setBackgroundResource(R.drawable.alarm_background_ok)
+                }
+                lastEyesClosureStatus = it
             }
 
         navController = findNavController()
@@ -135,6 +146,16 @@ class MonitoringFragment : Fragment() {
                     showAlarmDialog()
                 }
             }
+    }
+
+    private fun showWarningSnackbar(view: View) {
+        if (lastEyesClosureStatus != WARNING_NO_DATA_RECEIVED) {
+            Snackbar.make(
+                view,
+                R.string.eyes_receive_gap_warning,
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
     }
 
     override fun onResume() {

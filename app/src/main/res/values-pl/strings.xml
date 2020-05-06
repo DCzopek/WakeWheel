@@ -31,5 +31,6 @@
     <string name="your_device">twoje urządzenie</string>
     <string name="no_value">brak</string>
     <string name="no_paired_device">brak sparowanego urządzenia</string>
+    <string name="eyes_receive_gap_warning">Nie można wykryć oczu. Sprawdź ustawienie kamery lub ustaw jasne tło dla lepszego oświetlenia.</string>
 
 </resources>

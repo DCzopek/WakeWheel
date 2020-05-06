@@ -2,5 +2,6 @@ package com.example.wakewheel.monitoring
 
 enum class MonitorParameterStatus {
     OK,
-    DANGER
+    DANGER,
+    WARNING_NO_DATA_RECEIVED
 }
