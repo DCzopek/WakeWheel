@@ -34,5 +34,14 @@
         android:id="@+id/monitoringFragment"
         android:name="com.example.wakewheel.monitoring.MonitoringFragment"
         android:label="MonitoringFragment"
-        tools:layout="@layout/fragment_monitoring" />
+        tools:layout="@layout/fragment_monitoring">
+        <action
+            android:id="@+id/action_monitoringFragment_to_heartRateCalibrationFragment"
+            app:destination="@id/heartRateCalibrationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/heartRateCalibrationFragment"
+        android:name="com.example.wakewheel.heartrate.view.HeartRateCalibrationFragment"
+        android:label="HeartRateCalibrationFragment"
+        tools:layout="@layout/fragment_calibrate_heart_rate" />
 </navigation>

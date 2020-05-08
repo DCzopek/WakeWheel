@@ -24,6 +24,7 @@ import com.example.wakewheel.receivers.HeartRateEventBus
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_device_management.bluetooth
+import kotlinx.android.synthetic.main.fragment_monitoring.bluetooth_settings
 import kotlinx.android.synthetic.main.fragment_monitoring.bpm
 import kotlinx.android.synthetic.main.fragment_monitoring.bpm_label
 import kotlinx.android.synthetic.main.fragment_monitoring.camera
@@ -105,6 +106,10 @@ class MonitoringFragment : Fragment() {
                 }
         }
 
+        bluetooth_settings.setOnClickListener {
+            navController.navigate(R.id.action_monitoringFragment_to_heartRateCalibrationFragment)
+        }
+
         viewModel.monitoring
             .observe(viewLifecycleOwner) { monitoring ->
                 if (monitoring) {
@@ -142,7 +147,7 @@ class MonitoringFragment : Fragment() {
         viewModel.alarm
             .observe(viewLifecycleOwner) { alarm ->
                 if (alarm) {
-                    //playAlarmSound()
+                    playAlarmSound()
                     showAlarmDialog()
                 }
             }

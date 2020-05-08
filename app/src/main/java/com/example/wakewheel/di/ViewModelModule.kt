@@ -2,6 +2,7 @@ package com.example.wakewheel.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.wakewheel.heartrate.HeartRateCalibrationViewModel
 import com.example.wakewheel.heartrate.view.ManageBleDeviceViewModel
 import com.example.wakewheel.monitoring.MonitoringViewModel
 import dagger.Binds
@@ -9,7 +10,6 @@ import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import javax.inject.Singleton
 import kotlin.reflect.KClass
 
 @Target(
@@ -37,4 +37,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MonitoringViewModel::class)
     internal abstract fun bindMonitoringViewModel(viewModel: MonitoringViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(HeartRateCalibrationViewModel::class)
+    internal abstract fun bindHeartRateCalibrationViewModel(viewModel: HeartRateCalibrationViewModel): ViewModel
 }
