@@ -37,72 +37,92 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.7" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/bpm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_large"
-        android:background="@drawable/alarm_background_ok"
-        android:gravity="center"
-        android:padding="@dimen/padding_default"
-        android:text="0"
-        android:textSize="@dimen/bpm_text_size"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/container_guideline"
-        tools:ignore="HardcodedText"
-        tools:text="120" />
-
-    <TextView
-        android:id="@+id/bpm_label"
+    <LinearLayout
+        android:id="@+id/heart_rate_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_default"
-        android:text="@string/bpm"
-        android:textSize="@dimen/bpm_text_size"
-        app:layout_constraintBottom_toBottomOf="@id/bpm"
-        app:layout_constraintStart_toEndOf="@id/bpm"
-        app:layout_constraintTop_toTopOf="@id/bpm" />
+        android:background="@drawable/alarm_background_ok"
+        android:orientation="horizontal"
+        android:padding="@dimen/padding_default"
+        app:layout_constraintBottom_toBottomOf="@id/bluetooth"
+        app:layout_constraintStart_toEndOf="@id/bluetooth"
+        app:layout_constraintTop_toTopOf="@id/bluetooth">
 
-    <Button
-        android:id="@+id/start_monitoring"
+        <TextView
+            android:id="@+id/heart_rate_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_default"
+            android:text="@string/heart_rate_with_colon"
+            android:textSize="@dimen/text_large" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/bpm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_default"
+            android:gravity="center"
+            android:textSize="@dimen/bpm_text_size"
+            tools:text="120" />
+
+        <TextView
+            android:id="@+id/bpm_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_default"
+            android:text="@string/bpm"
+            android:textSize="@dimen/bpm_text_size"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:id="@+id/monitoring_button_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_large"
-        android:text="@string/start_monitoring"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
 
-    <Button
-        android:id="@+id/stop_monitoring"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_large"
-        android:backgroundTint="@color/light_grey"
-        android:text="@string/stop_monitoring"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <Button
+            android:id="@+id/start_monitoring"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/start_monitoring"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/stop_monitoring"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_grey"
+            android:text="@string/stop_monitoring"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/bluetooth"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="20dp"
-        android:src="@drawable/ic_bluetooth_connected_black_24dp"
-        app:layout_constraintBottom_toBottomOf="@id/bpm"
-        app:layout_constraintEnd_toStartOf="@id/center_guideline"
-        app:layout_constraintStart_toStartOf="@id/camera_container"
-        app:layout_constraintTop_toTopOf="@id/bpm"
+        android:layout_width="@dimen/icon_size_large"
+        android:layout_height="@dimen/icon_size_large"
+        android:layout_marginStart="@dimen/margin_default"
+        android:src="@drawable/icon_bluetooth_connected_black_24dp"
+        app:layout_constraintBottom_toTopOf="@id/monitoring_button_container"
+        app:layout_constraintStart_toEndOf="@id/bluetooth_settings"
+        app:layout_constraintTop_toBottomOf="@id/camera_container"
         tools:ignore="ContentDescription" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/center_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
+    <ImageView
+        android:id="@+id/bluetooth_settings"
+        android:layout_width="@dimen/icon_size_medium"
+        android:layout_height="@dimen/icon_size_medium"
+        android:layout_marginStart="@dimen/margin_default"
+        android:src="@drawable/icon_settings_default"
+        app:layout_constraintBottom_toTopOf="@id/monitoring_button_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/camera_container"
+        tools:ignore="ContentDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

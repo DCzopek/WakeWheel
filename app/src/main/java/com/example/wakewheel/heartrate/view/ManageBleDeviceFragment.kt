@@ -15,11 +15,15 @@ import com.example.wakewheel.receivers.HeartRateEventBus
 import com.example.wakewheel.services.BluetoothLeService
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.fragment_heart_rate.bluetooth
-import kotlinx.android.synthetic.main.fragment_heart_rate.connect_paired_device
-import kotlinx.android.synthetic.main.fragment_heart_rate.device_search
-import kotlinx.android.synthetic.main.fragment_heart_rate.receive_heart_rate
-import kotlinx.android.synthetic.main.fragment_heart_rate.tv_heart_rate
+import kotlinx.android.synthetic.main.fragment_device_management.address
+import kotlinx.android.synthetic.main.fragment_device_management.address_label
+import kotlinx.android.synthetic.main.fragment_device_management.bluetooth
+import kotlinx.android.synthetic.main.fragment_device_management.connect_paired_device
+import kotlinx.android.synthetic.main.fragment_device_management.device
+import kotlinx.android.synthetic.main.fragment_device_management.device_label
+import kotlinx.android.synthetic.main.fragment_device_management.device_search
+import kotlinx.android.synthetic.main.fragment_device_management.heart_rate
+import kotlinx.android.synthetic.main.fragment_device_management.no_device
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
@@ -28,7 +32,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class PairBleDeviceFragment : Fragment() {
+class ManageBleDeviceFragment : Fragment() {
 
     @Inject lateinit var bluetoothLeService: BluetoothLeService
     @Inject lateinit var bleHandler: BleHandler
@@ -45,7 +49,7 @@ class PairBleDeviceFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? =
-        inflater.inflate(R.layout.fragment_heart_rate, container, false)
+        inflater.inflate(R.layout.fragment_device_management, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -69,18 +73,24 @@ class PairBleDeviceFragment : Fragment() {
 
         connectionApi.deviceConnection
             .observe(viewLifecycleOwner) { connected ->
-                if (connected) bluetooth.setImageDrawable(activity?.getDrawable(R.drawable.ic_bluetooth_connected))
-                else bluetooth.setImageDrawable(activity?.getDrawable(R.drawable.ic_bluetooth_disconnected))
+                if (connected) handleDeviceConnected()
+                else handleDeviceDisconnected()
             }
+    }
+
+    private fun handleDeviceConnected() {
+        bluetooth.setImageDrawable(activity?.getDrawable(R.drawable.ic_bluetooth_connected))
+    }
+
+    private fun handleDeviceDisconnected() {
+        heart_rate.text = getString(R.string.no_value)
+        bluetooth.setImageDrawable(activity?.getDrawable(R.drawable.ic_bluetooth_disconnected))
     }
 
     override fun onResume() {
         super.onResume()
-
-        receive_heart_rate?.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) listenForHeartRate()
-            else heartRateListen?.cancel()
-        }
+        listenForHeartRate()
+        checkUserDevice()
     }
 
     override fun onPause() {
@@ -88,12 +98,28 @@ class PairBleDeviceFragment : Fragment() {
         heartRateListen?.cancel()
     }
 
+    private fun checkUserDevice() {
+        viewModel.getPairedDevice()
+            ?.let {
+                device.text = it.name
+                address.text = it.address
+            } ?: handleNoDevice()
+    }
+
+    private fun handleNoDevice() {
+        device_label.visibility = View.GONE
+        device.visibility = View.GONE
+        address_label.visibility = View.GONE
+        address.visibility = View.GONE
+        no_device.visibility = View.VISIBLE
+    }
+
     private fun listenForHeartRate() {
         heartRateListen = MainScope().launch {
             eventBus.listen()
                 .openSubscription()
                 .consumeEach {
-                    tv_heart_rate.text = it.toString()
+                    heart_rate.text = it.toString()
                 }
         }
     }

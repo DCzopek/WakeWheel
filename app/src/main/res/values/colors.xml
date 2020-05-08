@@ -4,7 +4,8 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="green_ok">#14E605</color>
-    <color name="red_warning">#BC0000</color>
+    <color name="red_danger">#BC0000</color>
+    <color name="orange_warning">#FF5722</color>
     <color name="light_grey">#9A9A9A</color>
     <color name="black">#000000</color>
 </resources>

@@ -24,8 +24,18 @@
     <string name="deny">deny</string>
     <string name="devices_list">Devices list</string>
     <string name="device">Device</string>
-    <string name="address_with_colon">address:</string>
+    <string name="address_with_colon">Address:</string>
     <string name="pair">Pair</string>
     <string name="search_device">Search device</string>
     <string name="connect_your_device">Connect your device</string>
+    <string name="heart_rate_with_colon">Heart Rate:</string>
+    <string name="device_with_colon">Device:</string>
+    <string name="your_device">your device</string>
+    <string name="no_value">no value</string>
+    <string name="no_paired_device">no paired device</string>
+    <string name="eyes_receive_gap_warning">Cannot recognize eyes closure. Please set camera in front on your face or try white background to light it.</string>
+    <string name="heart_rate_calibration">Heart rate calibration</string>
+    <string name="current_threshold_value_with_colon">Current threshold value:</string>
+    <string name="set">Set</string>
+    <string name="new_threshold_value">New threshold value</string>
 </resources>

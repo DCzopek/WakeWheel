@@ -10,7 +10,6 @@ import com.example.wakewheel.heartrate.AutoConnectBleDevice
 import com.example.wakewheel.monitoring.AlarmReason.EYES_CLOSURE
 import com.example.wakewheel.monitoring.AlarmReason.HEART_RATE
 import com.example.wakewheel.receivers.EyesMeasurementEventBus
-import com.example.wakewheel.receivers.HeartRateEventBus
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
@@ -19,9 +18,6 @@ import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
 import com.otaliastudios.cameraview.Frame
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,7 +26,6 @@ import javax.inject.Singleton
 class MonitoringViewModel @Inject constructor(
     private val sleepMonitor: SleepMonitor,
     private val eyesMeasurementEventBus: EyesMeasurementEventBus,
-    private val heartRateEventBus: HeartRateEventBus,
     private val autoConnectBleDevice: AutoConnectBleDevice,
     private val specificationsRepo: SpecificationsRepo,
     private val alarmReasonRepo: AlarmReasonRepo
@@ -44,16 +39,12 @@ class MonitoringViewModel @Inject constructor(
 
     private val _alarm = MutableLiveData(false)
 
-    val heartRate: LiveData<Int>
-        get() = _heartRate
-
     val heartRateStatus: LiveData<MonitorParameterStatus>
         get() = sleepMonitor.heartRateStatus
 
     val eyesClosureStatus: LiveData<MonitorParameterStatus>
         get() = sleepMonitor.eyesClosureStatus
 
-    private val _heartRate = MutableLiveData<Int>()
     private var detectionInProgress = false
     private var heartRateListen: Job? = null
 
@@ -66,7 +57,6 @@ class MonitoringViewModel @Inject constructor(
     }
 
     init {
-        listenForHeartRate()
         sleepMonitor.alarm
             .observeForever(alarmObserver)
     }
@@ -188,16 +178,6 @@ class MonitoringViewModel @Inject constructor(
 
     fun reconnectDevice() {
         autoConnectBleDevice()
-    }
-
-    private fun listenForHeartRate() {
-        heartRateListen = MainScope().launch {
-            heartRateEventBus.listen()
-                .openSubscription()
-                .consumeEach {
-                    _heartRate.postValue(it)
-                }
-        }
     }
 
     private fun getRealTimeOpts(): FirebaseVisionFaceDetectorOptions =

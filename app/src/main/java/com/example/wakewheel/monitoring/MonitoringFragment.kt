@@ -18,14 +18,25 @@ import androidx.navigation.fragment.findNavController
 import com.example.wakewheel.R
 import com.example.wakewheel.heartrate.BleDeviceConnectionApi
 import com.example.wakewheel.monitoring.MonitorParameterStatus.DANGER
+import com.example.wakewheel.monitoring.MonitorParameterStatus.OK
+import com.example.wakewheel.monitoring.MonitorParameterStatus.WARNING_NO_DATA_RECEIVED
+import com.example.wakewheel.receivers.HeartRateEventBus
+import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.fragment_heart_rate.bluetooth
+import kotlinx.android.synthetic.main.fragment_device_management.bluetooth
+import kotlinx.android.synthetic.main.fragment_monitoring.bluetooth_settings
 import kotlinx.android.synthetic.main.fragment_monitoring.bpm
+import kotlinx.android.synthetic.main.fragment_monitoring.bpm_label
 import kotlinx.android.synthetic.main.fragment_monitoring.camera
 import kotlinx.android.synthetic.main.fragment_monitoring.camera_container
+import kotlinx.android.synthetic.main.fragment_monitoring.heart_rate_container
 import kotlinx.android.synthetic.main.fragment_monitoring.start_monitoring
 import kotlinx.android.synthetic.main.fragment_monitoring.stop_monitoring
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -33,14 +44,20 @@ class MonitoringFragment : Fragment() {
 
     @Inject lateinit var connectionApi: BleDeviceConnectionApi
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var eventBus: HeartRateEventBus
 
     private lateinit var viewModel: MonitoringViewModel
     private lateinit var navController: NavController
 
     private lateinit var alarm: Ringtone
-    private var audioManager: AudioManager? = null
 
+    private var audioManager: AudioManager? = null
     private var player: MediaPlayer? = null
+
+    private var heartRateListen: Job? = null
+
+    private var deviceConnected = false
+    private var lastEyesClosureStatus = OK
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,11 +85,8 @@ class MonitoringFragment : Fragment() {
 
         connectionApi.deviceConnection
             .observe(viewLifecycleOwner) { connected ->
-                if (connected) bluetooth.setImageDrawable(activity?.getDrawable(R.drawable.ic_bluetooth_connected))
-                else {
-                    bpm.text = "0"
-                    bluetooth.setImageDrawable(activity?.getDrawable(R.drawable.ic_bluetooth_disconnected))
-                }
+                if (connected) handleDeviceConnected()
+                else handleDeviceDisconnected()
             }
 
 
@@ -92,6 +106,10 @@ class MonitoringFragment : Fragment() {
                 }
         }
 
+        bluetooth_settings.setOnClickListener {
+            navController.navigate(R.id.action_monitoringFragment_to_heartRateCalibrationFragment)
+        }
+
         viewModel.monitoring
             .observe(viewLifecycleOwner) { monitoring ->
                 if (monitoring) {
@@ -103,21 +121,25 @@ class MonitoringFragment : Fragment() {
                 }
             }
 
-        viewModel.heartRate
-            .observe(viewLifecycleOwner) {
-                bpm.text = it.toString()
-            }
-
         viewModel.heartRateStatus
             .observe(viewLifecycleOwner) {
-                if (it == DANGER) bpm.setBackgroundResource(R.drawable.alarm_background_nok)
-                else bpm.setBackgroundResource(R.drawable.alarm_background_ok)
+                if (deviceConnected) {
+                    if (it == DANGER) heart_rate_container.setBackgroundResource(R.drawable.alarm_background_nok)
+                    else heart_rate_container.setBackgroundResource(R.drawable.alarm_background_ok)
+                }
             }
 
         viewModel.eyesClosureStatus
             .observe(viewLifecycleOwner) {
-                if (it == DANGER) camera_container.setBackgroundResource(R.drawable.alarm_background_nok)
-                else camera_container.setBackgroundResource(R.drawable.alarm_background_ok)
+                when (it) {
+                    DANGER -> camera_container.setBackgroundResource(R.drawable.alarm_background_nok)
+                    WARNING_NO_DATA_RECEIVED -> {
+                        showWarningSnackbar(view)
+                        camera_container.setBackgroundResource(R.drawable.alarm_background_warning)
+                    }
+                    else -> camera_container.setBackgroundResource(R.drawable.alarm_background_ok)
+                }
+                lastEyesClosureStatus = it
             }
 
         navController = findNavController()
@@ -131,24 +153,69 @@ class MonitoringFragment : Fragment() {
             }
     }
 
+    private fun showWarningSnackbar(view: View) {
+        if (lastEyesClosureStatus != WARNING_NO_DATA_RECEIVED) {
+            Snackbar.make(
+                view,
+                R.string.eyes_receive_gap_warning,
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        listenForHeartRate()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        heartRateListen?.cancel()
+    }
+
     override fun onDestroyView() {
         viewModel.clearAlarm()
         viewModel.alarm.removeObservers(viewLifecycleOwner)
         super.onDestroyView()
     }
 
+    private fun listenForHeartRate() {
+        heartRateListen = MainScope().launch {
+            eventBus.listen()
+                .openSubscription()
+                .consumeEach {
+                    bpm.text = it.toString()
+                }
+        }
+    }
+
     private fun showAlarmDialog() {
         AlertDialog.Builder(activity)
             .setTitle(R.string.alarm)
             .setMessage(getString(R.string.alarm_message))
-            .setNeutralButton(R.string.dismiss) { dialog, _ ->
+            .setNeutralButton(R.string.dismiss) { dialog, _ -> dialog.dismiss() }
+            .setOnDismissListener {
+                showFeedbackDialog()
                 player?.stop()
                 viewModel.clearAlarm()
-                dialog.dismiss()
-                showFeedbackDialog()
+                viewModel.onStartMonitor()
             }
             .create()
             .show()
+    }
+
+    private fun handleDeviceDisconnected() {
+        deviceConnected = false
+        bpm_label.visibility = View.GONE
+        bpm.text = getString(R.string.no_value)
+        heart_rate_container.setBackgroundResource(R.drawable.alarm_background_undefined)
+        bluetooth.setImageDrawable(activity?.getDrawable(R.drawable.ic_bluetooth_disconnected))
+    }
+
+    private fun handleDeviceConnected() {
+        deviceConnected = true
+        bpm_label.visibility = View.VISIBLE
+        bluetooth.setImageDrawable(activity?.getDrawable(R.drawable.ic_bluetooth_connected))
     }
 
     private fun playAlarmSound() {

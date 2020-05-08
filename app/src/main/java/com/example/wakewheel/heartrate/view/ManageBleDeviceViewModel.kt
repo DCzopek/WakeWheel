@@ -150,6 +150,9 @@ class ManageBleDeviceViewModel @Inject constructor(
         }
     }
 
+    fun getPairedDevice(): BleDevice? =
+        repo.fetch()
+
     companion object {
         private const val SCAN_PERIOD_TIME = 15_000L
     }
