@@ -12,11 +12,11 @@ import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.DURING
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.FAIL
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.SUCCESS
 import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.TIMEOUT
-import com.example.wakewheel.receivers.HeartRateEventBus
-import com.example.wakewheel.receivers.gatt.BluetoothGattAction.CONNECT_TO_HEART_RATE_DEVICE_SUCCEED
-import com.example.wakewheel.receivers.gatt.BluetoothGattAction.SET_NOTIFICATION_FAILS
-import com.example.wakewheel.receivers.gatt.BluetoothGattAction.SET_NOTIFICATION_FAILS_NO_CONNECTED_DEVICE
-import com.example.wakewheel.receivers.gatt.BluetoothGattEventBus
+import com.example.wakewheel.heartrate.HeartRateEventBus
+import com.example.wakewheel.heartrate.receivers.BluetoothGattAction.CONNECT_TO_HEART_RATE_DEVICE_SUCCEED
+import com.example.wakewheel.heartrate.receivers.BluetoothGattAction.SET_NOTIFICATION_FAILS
+import com.example.wakewheel.heartrate.receivers.BluetoothGattAction.SET_NOTIFICATION_FAILS_NO_CONNECTED_DEVICE
+import com.example.wakewheel.heartrate.receivers.BluetoothGattEventBus
 import com.example.wakewheel.utils.SingleLiveEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job

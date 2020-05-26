@@ -1,4 +1,4 @@
-package com.example.wakewheel.receivers.gatt
+package com.example.wakewheel.heartrate.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context

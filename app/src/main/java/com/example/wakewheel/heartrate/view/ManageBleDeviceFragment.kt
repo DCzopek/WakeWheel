@@ -11,8 +11,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.wakewheel.R
 import com.example.wakewheel.heartrate.BleDeviceConnectionApi
 import com.example.wakewheel.heartrate.BleHandler
-import com.example.wakewheel.receivers.HeartRateEventBus
-import com.example.wakewheel.services.BluetoothLeService
+import com.example.wakewheel.heartrate.HeartRateEventBus
+import com.example.wakewheel.heartrate.services.BluetoothLeService
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_device_management.address

@@ -1,8 +1,8 @@
 package com.example.wakewheel.heartrate
 
 import com.example.wakewheel.Const
-import com.example.wakewheel.receivers.gatt.BluetoothGattAction
-import com.example.wakewheel.receivers.gatt.BluetoothGattEventBus
+import com.example.wakewheel.heartrate.receivers.BluetoothGattAction
+import com.example.wakewheel.heartrate.receivers.BluetoothGattEventBus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope

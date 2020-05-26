@@ -1,4 +1,4 @@
-package com.example.wakewheel.services
+package com.example.wakewheel.heartrate.services
 
 import android.annotation.SuppressLint
 import android.app.Service
@@ -15,11 +15,11 @@ import android.os.IBinder
 import android.util.Log
 import com.example.wakewheel.Const
 import com.example.wakewheel.heartrate.GattAttributes
-import com.example.wakewheel.receivers.gatt.BluetoothGattAction
-import com.example.wakewheel.receivers.gatt.BluetoothGattAction.CONNECT_TO_HEART_RATE_DEVICE_SUCCEED
-import com.example.wakewheel.receivers.gatt.BluetoothGattAction.SET_NOTIFICATION_FAILS
-import com.example.wakewheel.receivers.gatt.BluetoothGattAction.SET_NOTIFICATION_FAILS_NO_CONNECTED_DEVICE
-import com.example.wakewheel.receivers.gatt.BluetoothGattEventBus
+import com.example.wakewheel.heartrate.receivers.BluetoothGattAction
+import com.example.wakewheel.heartrate.receivers.BluetoothGattAction.CONNECT_TO_HEART_RATE_DEVICE_SUCCEED
+import com.example.wakewheel.heartrate.receivers.BluetoothGattAction.SET_NOTIFICATION_FAILS
+import com.example.wakewheel.heartrate.receivers.BluetoothGattAction.SET_NOTIFICATION_FAILS_NO_CONNECTED_DEVICE
+import com.example.wakewheel.heartrate.receivers.BluetoothGattEventBus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope

@@ -1,4 +1,4 @@
-package com.example.wakewheel.receivers
+package com.example.wakewheel.heartrate
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope

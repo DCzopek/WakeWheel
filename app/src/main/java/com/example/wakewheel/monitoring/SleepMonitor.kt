@@ -7,8 +7,8 @@ import com.example.wakewheel.monitoring.AlarmReason.HEART_RATE
 import com.example.wakewheel.monitoring.MonitorParameterStatus.DANGER
 import com.example.wakewheel.monitoring.MonitorParameterStatus.OK
 import com.example.wakewheel.monitoring.MonitorParameterStatus.WARNING_NO_DATA_RECEIVED
-import com.example.wakewheel.receivers.EyesMeasurementEventBus
-import com.example.wakewheel.receivers.HeartRateEventBus
+import com.example.wakewheel.facerecognition.EyesMeasurementEventBus
+import com.example.wakewheel.heartrate.HeartRateEventBus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
