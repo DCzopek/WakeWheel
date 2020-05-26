@@ -9,12 +9,12 @@ import com.example.wakewheel.heartrate.BleHandler
 import com.example.wakewheel.heartrate.BluetoothDeviceConnectionObserver
 import com.example.wakewheel.heartrate.BluetoothDeviceRepo
 import com.example.wakewheel.heartrate.ConnectBleDevice
+import com.example.wakewheel.heartrate.HeartRateEventBus
 import com.example.wakewheel.heartrate.InMemoryBleDeviceConnectionRepo
-import com.example.wakewheel.receivers.HeartRateEventBus
-import com.example.wakewheel.receivers.gatt.BluetoothGattController
-import com.example.wakewheel.receivers.gatt.BluetoothGattEventBus
-import com.example.wakewheel.services.BluetoothLeService
-import com.example.wakewheel.services.BluetoothLeServiceBinder
+import com.example.wakewheel.heartrate.receivers.BluetoothGattController
+import com.example.wakewheel.heartrate.receivers.BluetoothGattEventBus
+import com.example.wakewheel.heartrate.services.BluetoothLeService
+import com.example.wakewheel.heartrate.services.BluetoothLeServiceBinder
 import dagger.Module
 import dagger.Provides
 import io.realm.Realm
@@ -56,7 +56,11 @@ class BluetoothModule {
         heartRateEventBus: HeartRateEventBus,
         connectionObserver: BluetoothDeviceConnectionObserver
     ) =
-        BluetoothGattController(gattEventBus, heartRateEventBus, connectionObserver)
+        BluetoothGattController(
+            gattEventBus,
+            heartRateEventBus,
+            connectionObserver
+        )
 
     @Singleton
     @Provides

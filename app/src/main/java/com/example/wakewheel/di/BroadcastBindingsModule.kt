@@ -1,6 +1,6 @@
 package com.example.wakewheel.di
 
-import com.example.wakewheel.receivers.gatt.BluetoothGattReceiver
+import com.example.wakewheel.heartrate.receivers.BluetoothGattReceiver
 import dagger.Module
 import dagger.android.AndroidInjectionModule
 import dagger.android.ContributesAndroidInjector

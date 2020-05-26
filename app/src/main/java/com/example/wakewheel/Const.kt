@@ -12,6 +12,8 @@ object Const {
     const val EYES_CLOSURE_MIN_VALUE_THRESHOLD = 0.15f
     const val EYES_CLOSURE_MAX_TIME_THRESHOLD = 10_000L
 
+    const val FIRST_USE_KEY = "wakewheel.firstUse"
+
     const val FACE_RECOGNITION_TAG = "FaceRecognitionScreen"
 
     const val EXTRA_HEART_RATE_DATA = "com.example.wakewheel.EXTRA_HEART_RATE_DATA"

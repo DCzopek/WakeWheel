@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.example.wakewheel.di.AppModule
 import com.example.wakewheel.di.DaggerAppComponent
 import com.example.wakewheel.heartrate.AutoConnectBleDevice
-import com.example.wakewheel.receivers.gatt.BluetoothGattReceiver
+import com.example.wakewheel.heartrate.receivers.BluetoothGattReceiver
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector

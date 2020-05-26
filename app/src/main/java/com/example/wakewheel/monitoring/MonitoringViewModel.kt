@@ -9,7 +9,7 @@ import com.example.wakewheel.extensions.visionImageRotation
 import com.example.wakewheel.heartrate.AutoConnectBleDevice
 import com.example.wakewheel.monitoring.AlarmReason.EYES_CLOSURE
 import com.example.wakewheel.monitoring.AlarmReason.HEART_RATE
-import com.example.wakewheel.receivers.EyesMeasurementEventBus
+import com.example.wakewheel.facerecognition.EyesMeasurementEventBus
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata

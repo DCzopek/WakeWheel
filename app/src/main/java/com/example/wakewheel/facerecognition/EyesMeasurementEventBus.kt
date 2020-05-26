@@ -1,4 +1,4 @@
-package com.example.wakewheel.receivers
+package com.example.wakewheel.facerecognition
 
 import com.example.wakewheel.monitoring.EyesMeasurement
 import kotlinx.coroutines.ExperimentalCoroutinesApi

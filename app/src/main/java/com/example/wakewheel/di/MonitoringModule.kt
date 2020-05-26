@@ -7,8 +7,8 @@ import com.example.wakewheel.monitoring.AlarmReasonRepo
 import com.example.wakewheel.monitoring.AlarmSpecificationChecker
 import com.example.wakewheel.monitoring.SleepMonitor
 import com.example.wakewheel.monitoring.SpecificationsRepo
-import com.example.wakewheel.receivers.EyesMeasurementEventBus
-import com.example.wakewheel.receivers.HeartRateEventBus
+import com.example.wakewheel.facerecognition.EyesMeasurementEventBus
+import com.example.wakewheel.heartrate.HeartRateEventBus
 import dagger.Module
 import dagger.Provides
 import io.realm.Realm

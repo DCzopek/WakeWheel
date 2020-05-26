@@ -20,7 +20,7 @@ import com.example.wakewheel.heartrate.BleDeviceConnectionApi
 import com.example.wakewheel.monitoring.MonitorParameterStatus.DANGER
 import com.example.wakewheel.monitoring.MonitorParameterStatus.OK
 import com.example.wakewheel.monitoring.MonitorParameterStatus.WARNING_NO_DATA_RECEIVED
-import com.example.wakewheel.receivers.HeartRateEventBus
+import com.example.wakewheel.heartrate.HeartRateEventBus
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_device_management.bluetooth

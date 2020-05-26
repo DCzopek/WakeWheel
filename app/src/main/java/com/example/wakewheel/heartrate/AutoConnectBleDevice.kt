@@ -1,7 +1,6 @@
 package com.example.wakewheel.heartrate
 
 import com.example.wakewheel.Const
-import com.example.wakewheel.receivers.HeartRateEventBus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
