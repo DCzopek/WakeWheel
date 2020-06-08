@@ -11,15 +11,15 @@
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_mainFragment_to_pairBleDeviceFragment"
-            app:destination="@id/pairBleDeviceFragment" />
+            app:destination="@id/manageBleDeviceFragment" />
         <action
             android:id="@+id/action_mainFragment_to_monitoringFragment"
             app:destination="@id/monitoringFragment" />
     </fragment>
     <fragment
-        android:id="@+id/pairBleDeviceFragment"
+        android:id="@+id/manageBleDeviceFragment"
         android:name="com.example.wakewheel.heartrate.view.ManageBleDeviceFragment"
-        android:label="PairBleDeviceFragment"
+        android:label="ManageBleDeviceFragment"
         tools:layout="@layout/fragment_device_management">
         <action
             android:id="@+id/action_pairBleDeviceFragment_to_searchBleDeviceFragment"

@@ -8,15 +8,15 @@ import com.example.wakewheel.heartrate.BleDevice
 import com.example.wakewheel.heartrate.BleHandler
 import com.example.wakewheel.heartrate.BluetoothDeviceRepo
 import com.example.wakewheel.heartrate.ConnectBleDevice
-import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.DURING
-import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.FAIL
-import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.SUCCESS
-import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.TIMEOUT
 import com.example.wakewheel.heartrate.HeartRateEventBus
 import com.example.wakewheel.heartrate.receivers.BluetoothGattAction.CONNECT_TO_HEART_RATE_DEVICE_SUCCEED
 import com.example.wakewheel.heartrate.receivers.BluetoothGattAction.SET_NOTIFICATION_FAILS
 import com.example.wakewheel.heartrate.receivers.BluetoothGattAction.SET_NOTIFICATION_FAILS_NO_CONNECTED_DEVICE
 import com.example.wakewheel.heartrate.receivers.BluetoothGattEventBus
+import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.DURING
+import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.FAIL
+import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.SUCCESS
+import com.example.wakewheel.heartrate.view.DeviceConnectionStatus.TIMEOUT
 import com.example.wakewheel.utils.SingleLiveEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -128,26 +128,27 @@ class ManageBleDeviceViewModel @Inject constructor(
 
     fun startScanning() {
         scanJob = MainScope().launch {
-            while (true) {
-                performScan()
-                delay(SCAN_PERIOD_TIME)
+            if (bleHandler.isBluetoothEnabled()) {
+                while (true) {
+                    performScan()
+                    delay(SCAN_PERIOD_TIME)
+                }
+
+            } else {
+                requestBluetoothEnable.call()
             }
+        }
+    }
+
+    private fun performScan() {
+        MainScope().launch {
+            bleHandler.scanForBle()
+                .let { devices -> _deviceList.postValue(devices) }
         }
     }
 
     fun stopScanning() {
         scanJob?.cancel()
-    }
-
-    private fun performScan() {
-        if (bleHandler.isBluetoothEnabled()) {
-            MainScope().launch {
-                bleHandler.scanForBle()
-                    .let { devices -> _deviceList.postValue(devices) }
-            }
-        } else {
-            requestBluetoothEnable.call()
-        }
     }
 
     fun getPairedDevice(): BleDevice? =

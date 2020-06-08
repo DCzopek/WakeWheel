@@ -1,6 +1,7 @@
 package com.example.wakewheel.di
 
 import android.content.Context
+import com.example.wakewheel.data.RealmApi
 import com.example.wakewheel.data.device.BluetoothDeviceMapper
 import com.example.wakewheel.data.device.RealmBluetoothDeviceRepo
 import com.example.wakewheel.heartrate.AutoConnectBleDevice
@@ -17,7 +18,6 @@ import com.example.wakewheel.heartrate.services.BluetoothLeService
 import com.example.wakewheel.heartrate.services.BluetoothLeServiceBinder
 import dagger.Module
 import dagger.Provides
-import io.realm.Realm
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Singleton
 
@@ -78,10 +78,10 @@ class BluetoothModule {
 
     @Provides
     fun provideBluetoothDeviceRepo(
-        realm: Realm,
+        realmApi: RealmApi,
         mapper: BluetoothDeviceMapper
     ): BluetoothDeviceRepo =
-        RealmBluetoothDeviceRepo(realm, mapper)
+        RealmBluetoothDeviceRepo(realmApi, mapper)
 
     @Singleton
     @Provides

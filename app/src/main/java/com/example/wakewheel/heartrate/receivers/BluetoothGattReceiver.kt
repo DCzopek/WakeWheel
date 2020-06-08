@@ -21,10 +21,7 @@ class BluetoothGattReceiver : BroadcastReceiver() {
         intent?.run {
             when (action) {
                 Const.ACTION_DATA_AVAILABLE -> controller.onDataReceive(
-                    getIntExtra(
-                        Const.EXTRA_HEART_RATE_DATA,
-                        0
-                    )
+                    getIntExtra(Const.EXTRA_HEART_RATE_DATA, 0)
                 )
                 Const.ACTION_GATT_CONNECTED -> controller.onGattConnected()
                 Const.ACTION_GATT_DISCONNECTED -> controller.onGattDisconnected()

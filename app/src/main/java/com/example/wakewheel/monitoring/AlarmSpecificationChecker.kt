@@ -35,6 +35,18 @@ class AlarmSpecificationChecker {
             data.leftOpenProbability < valueThreshold && data.rightOpenProbability < valueThreshold
         }
 
+    private fun EyesDataSpecification.checkEyesDataTimeSpecification(): Boolean =
+        System.currentTimeMillis()
+            .let { now ->
+                if (eyesDataCounting) {
+                    timeThreshold < now - eyesDataCountdownTimestamp
+                } else {
+                    eyesDataCounting = true
+                    eyesDataCountdownTimestamp = now
+                    false
+                }
+            }
+
     fun isBelowThreshold(data: Double): Boolean =
         data < heartRateSpecification.valueThreshold
 
@@ -46,18 +58,6 @@ class AlarmSpecificationChecker {
                 } else {
                     heartRateCounting = true
                     heartRateCountdownTimestamp = now
-                    false
-                }
-            }
-
-    private fun EyesDataSpecification.checkEyesDataTimeSpecification(): Boolean =
-        System.currentTimeMillis()
-            .let { now ->
-                if (eyesDataCounting) {
-                    timeThreshold < now - eyesDataCountdownTimestamp
-                } else {
-                    eyesDataCounting = true
-                    eyesDataCountdownTimestamp = now
                     false
                 }
             }
