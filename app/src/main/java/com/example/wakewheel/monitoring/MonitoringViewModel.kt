@@ -139,7 +139,6 @@ class MonitoringViewModel @Inject constructor(
             if (!detectionInProgress) {
                 detectionInProgress = true
 
-                Log.d(Const.FACE_RECOGNITION_TAG, "Rotation: ${frame.rotation}")
                 val metadata = getMetadata(frame)
                 val realTimeOpts = getRealTimeOpts()
 
@@ -161,10 +160,6 @@ class MonitoringViewModel @Inject constructor(
                                         leftOpenProbability = leftEyeProb,
                                         rightOpenProbability = rightEyeProb
                                     )
-                                )
-                                Log.d(
-                                    Const.FACE_RECOGNITION_TAG,
-                                    "Eyes prob: left -> $leftEyeProb   right -> $rightEyeProb"
                                 )
                             }
                         }

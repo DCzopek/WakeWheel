@@ -45,7 +45,7 @@ class BluetoothLeService(
             gattEventBus.listen()
                 .openSubscription()
                 .consumeEach {
-                    if (it == BluetoothGattAction.GATT_CONNECTED) {
+                    if (it == BluetoothGattAction.GATT_DISCONNECTED) {
                         connectedDevice = null
                     }
                 }

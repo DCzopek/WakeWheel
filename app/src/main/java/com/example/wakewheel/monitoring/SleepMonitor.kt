@@ -53,14 +53,6 @@ class SleepMonitor(
 
     private var lastEyesDataReceiveTimestamp = 0L
 
-    fun startMonitoring() {
-        _monitoring.value = true
-        startHeartRateListen()
-        startEyesMeasurementListen()
-        startCheckingSpecifications()
-        alarmSpecificationChecker.refreshSpecificationData()
-    }
-
     fun stopMonitoring() {
         heartRateMeasurements.clear()
         leftEyeMeasurements.clear()
@@ -70,6 +62,14 @@ class SleepMonitor(
         _heartRateStatus.postValue(OK)
         heartRateListen?.cancel()
         eyesMeasurementListen?.cancel()
+    }
+
+    fun startMonitoring() {
+        _monitoring.value = true
+        startHeartRateListen()
+        startEyesMeasurementListen()
+        startCheckingSpecifications()
+        alarmSpecificationChecker.refreshSpecificationData()
     }
 
     private fun startCheckingSpecifications() {
@@ -127,7 +127,6 @@ class SleepMonitor(
             heartRateEventBus.listen()
                 .openSubscription()
                 .consumeEach {
-                    println("SleepMonitor: heartRateMeasurement $it")
                     heartRateMeasurements.bufferedPut(timestamp(), it, DEFAULT_BUFFER_SIZE)
                 }
         }

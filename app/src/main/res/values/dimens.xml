@@ -14,4 +14,10 @@
     <dimen name="text_default">13sp</dimen>
     <dimen name="icon_size_large">40dp</dimen>
     <dimen name="icon_size_medium">32dp</dimen>
+    <dimen name="padding_medium">24dp</dimen>
+    <dimen name="button_size">48dp</dimen>
+    <dimen name="large_padding">32dp</dimen>
+    <dimen name="title_text_size">26sp</dimen>
+    <dimen name="elevation_default">5dp</dimen>
+    <dimen name="icon_size_very_large">64dp</dimen>
 </resources>

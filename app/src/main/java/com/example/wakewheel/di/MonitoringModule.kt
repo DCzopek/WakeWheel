@@ -1,17 +1,17 @@
 package com.example.wakewheel.di
 
 import com.example.wakewheel.data.InMemoryAlarmReasonRepo
+import com.example.wakewheel.data.RealmApi
 import com.example.wakewheel.data.specifications.RealmSpecificationsRepo
 import com.example.wakewheel.data.specifications.SpecificationsMapper
+import com.example.wakewheel.facerecognition.EyesMeasurementEventBus
+import com.example.wakewheel.heartrate.HeartRateEventBus
 import com.example.wakewheel.monitoring.AlarmReasonRepo
 import com.example.wakewheel.monitoring.AlarmSpecificationChecker
 import com.example.wakewheel.monitoring.SleepMonitor
 import com.example.wakewheel.monitoring.SpecificationsRepo
-import com.example.wakewheel.facerecognition.EyesMeasurementEventBus
-import com.example.wakewheel.heartrate.HeartRateEventBus
 import dagger.Module
 import dagger.Provides
-import io.realm.Realm
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Singleton
 
@@ -38,8 +38,11 @@ class MonitoringModule {
         AlarmSpecificationChecker()
 
     @Provides
-    fun provideSpecificationsRepo(mapper: SpecificationsMapper, realm: Realm): SpecificationsRepo =
-        RealmSpecificationsRepo(mapper, realm)
+    fun provideSpecificationsRepo(
+        mapper: SpecificationsMapper,
+        realmApi: RealmApi
+    ): SpecificationsRepo =
+        RealmSpecificationsRepo(mapper, realmApi)
 
     @Provides
     fun provideSpecificationsMapper() =

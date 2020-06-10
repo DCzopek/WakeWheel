@@ -1,12 +1,12 @@
 package com.example.wakewheel.data.device
 
 import android.bluetooth.BluetoothDevice
+import com.example.wakewheel.data.RealmApi
 import com.example.wakewheel.heartrate.BleDevice
 import com.example.wakewheel.heartrate.BluetoothDeviceRepo
-import io.realm.Realm
 
 class RealmBluetoothDeviceRepo(
-    private val realm: Realm,
+    private val realmApi: RealmApi,
     private val mapper: BluetoothDeviceMapper
 ) : BluetoothDeviceRepo {
 
@@ -15,9 +15,12 @@ class RealmBluetoothDeviceRepo(
     }
 
     override fun insertOrUpdate(device: BleDevice) {
-        realm.executeTransaction {
-            it.insertOrUpdate(mapper.map(device))
-        }
+        realmApi.getInstance()
+            .use { realm ->
+                realm.executeTransaction {
+                    it.insertOrUpdate(mapper.map(device))
+                }
+            }
     }
 
     override fun remove(device: BluetoothDevice) {
@@ -25,16 +28,22 @@ class RealmBluetoothDeviceRepo(
     }
 
     override fun remove(device: BleDevice) {
-        realm.executeTransaction {
-            it.where(RealmBluetoothDevice::class.java)
-                .equalTo("address", device.address)
-                .findFirst()
-                ?.deleteFromRealm()
-        }
+        realmApi.getInstance()
+            .use { realm ->
+                realm.executeTransaction {
+                    it.where(RealmBluetoothDevice::class.java)
+                        .equalTo("address", device.address)
+                        .findFirst()
+                        ?.deleteFromRealm()
+                }
+            }
     }
 
     override fun fetch(): BleDevice? =
-        realm.where(RealmBluetoothDevice::class.java)
-            .findFirst()
-            ?.let { mapper.map(realm.copyFromRealm(it)) }
+        realmApi.getInstance()
+            .use { realm ->
+                realm.where(RealmBluetoothDevice::class.java)
+                    .findFirst()
+                    ?.let { mapper.map(realm.copyFromRealm(it)) }
+            }
 }
