@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_monitoring"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/primaryLight">
 
     <FrameLayout
         android:id="@+id/camera_container"
@@ -41,19 +42,21 @@
         android:id="@+id/heart_rate_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_default"
         android:background="@drawable/alarm_background_ok"
+        android:elevation="@dimen/elevation_default"
         android:orientation="horizontal"
         android:padding="@dimen/padding_default"
-        app:layout_constraintBottom_toBottomOf="@id/bluetooth"
-        app:layout_constraintStart_toEndOf="@id/bluetooth"
-        app:layout_constraintTop_toTopOf="@id/bluetooth">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/camera_container"
+        app:layout_constraintBottom_toTopOf="@id/monitoring_button_container">
 
         <TextView
             android:id="@+id/heart_rate_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_default"
+            android:gravity="center"
+            android:textStyle="bold"
             android:text="@string/heart_rate_with_colon"
             android:textSize="@dimen/text_large" />
 
@@ -63,7 +66,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_default"
             android:gravity="center"
-            android:textSize="@dimen/bpm_text_size"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_large"
             tools:text="120" />
 
         <TextView
@@ -80,48 +84,49 @@
 
     <FrameLayout
         android:id="@+id/monitoring_button_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_size"
         android:layout_margin="@dimen/margin_large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/start_monitoring"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:text="@string/start_monitoring"
             android:visibility="visible" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/stop_monitoring"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/light_grey"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:text="@string/stop_monitoring"
             android:visibility="gone" />
     </FrameLayout>
 
     <ImageView
         android:id="@+id/bluetooth"
-        android:layout_width="@dimen/icon_size_large"
-        android:layout_height="@dimen/icon_size_large"
-        android:layout_marginStart="@dimen/margin_default"
+        android:layout_width="@dimen/button_size"
+        android:layout_height="@dimen/button_size"
+        android:padding="@dimen/padding_default"
+        android:background="@drawable/circle_button_background_primary"
+        android:layout_margin="@dimen/margin_default"
         android:src="@drawable/icon_bluetooth_connected_black_24dp"
-        app:layout_constraintBottom_toTopOf="@id/monitoring_button_container"
-        app:layout_constraintStart_toEndOf="@id/bluetooth_settings"
         app:layout_constraintTop_toBottomOf="@id/camera_container"
+        app:layout_constraintStart_toStartOf="parent"
         tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/bluetooth_settings"
-        android:layout_width="@dimen/icon_size_medium"
-        android:layout_height="@dimen/icon_size_medium"
-        android:layout_marginStart="@dimen/margin_default"
+        android:layout_width="@dimen/button_size"
+        android:layout_height="@dimen/button_size"
+        android:padding="@dimen/padding_default"
+        android:layout_margin="@dimen/margin_default"
+        android:background="@drawable/circle_button_background"
         android:src="@drawable/icon_settings_default"
-        app:layout_constraintBottom_toTopOf="@id/monitoring_button_container"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/camera_container"
         tools:ignore="ContentDescription" />
 

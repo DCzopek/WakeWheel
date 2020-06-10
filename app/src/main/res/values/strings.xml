@@ -26,7 +26,7 @@
     <string name="device">Device</string>
     <string name="address_with_colon">Address:</string>
     <string name="pair">Pair</string>
-    <string name="search_device">Search device</string>
+    <string name="search_device">Search for new device</string>
     <string name="connect_your_device">Connect your device</string>
     <string name="heart_rate_with_colon">Heart Rate:</string>
     <string name="device_with_colon">Device:</string>
@@ -38,4 +38,6 @@
     <string name="current_threshold_value_with_colon">Current threshold value:</string>
     <string name="set">Set</string>
     <string name="new_threshold_value">New threshold value</string>
+    <string translatable="false" name="welcome">Witaj !</string>
+    <string translatable="false" name="splash_description">Aplikacja, której właśnie używasz ma za zadanie wykrywać stany twojego zmęczenia za kierownicą i zaalarmować Cię gdy wykryje możliwość zaśnięcia. \n\nAplikacja wykorzystuje w tym celu pomiar pulsu oraz wykrywanie zamknięcia oczu. Aby uzyskać najlepsze rezultaty, korzystaj z obu metod jednocześnie. \n\n Szerokiej drogi !</string>
 </resources>
